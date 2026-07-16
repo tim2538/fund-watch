@@ -7,7 +7,12 @@ import {
   type TimeRange,
 } from "@/lib/funds";
 
-export const revalidate = 3600;
+// Statically generate one JSON file per fund at build time (output: "export").
+export const dynamic = "force-static";
+
+export function generateStaticParams() {
+  return FUND_SYMBOLS.map((symbol) => ({ symbol }));
+}
 
 const RANGES: TimeRange[] = ["1M", "3M", "6M", "YTD", "1Y"];
 

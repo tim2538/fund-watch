@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import { getAllFunds } from "@/lib/scrape";
 import { FUND_SYMBOLS } from "@/lib/funds";
 
-// Refresh on the server at most once an hour; still works offline via SW cache.
-export const revalidate = 3600;
+// Rendered to a static JSON file at build time (compatible with output: "export").
+export const dynamic = "force-static";
 
 export async function GET() {
   const funds = await getAllFunds(FUND_SYMBOLS);

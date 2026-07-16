@@ -3,8 +3,9 @@ import { FundDashboard } from "@/components/fund-dashboard";
 import { getAllFunds } from "@/lib/scrape";
 import { FUND_SYMBOLS } from "@/lib/funds";
 
-// Revalidate the server render hourly; the PWA service worker serves it offline.
-export const revalidate = 3600;
+// Statically generated at build time. Data is fetched from Finnomena during the
+// build, so re-run the deploy (or the scheduled workflow) to refresh it.
+export const dynamic = "force-static";
 
 export default async function Home() {
   const funds = await getAllFunds(FUND_SYMBOLS);
