@@ -15,7 +15,8 @@ type Dict = Record<string, string>;
 
 const en: Dict = {
   installApp: "Install app",
-  iosInstallHint: "To install: tap the Share button, then choose \"Add to Home Screen\".",
+  iosInstallHint:
+    'To install: tap the Share button, then choose "Add to Home Screen".',
   menu: "Menu",
   preference: "Preference",
   themeLight: "Light",
@@ -51,11 +52,13 @@ const en: Dict = {
   sectorDesc: "By industry sector of invested securities",
   noData: "No data available",
   dividendHistory: "Dividend History",
-  dividendHistoryDesc: "Register-close (XD) date, payment date and dividend per unit",
+  dividendHistoryDesc:
+    "Register-close (XD) date, payment date and dividend per unit",
   navAsOf: "NAV as of {date}",
   viewSource: "View source on Finnomena",
   loadErrorTitle: "{symbol} — failed to load",
-  loadErrorDesc: "Couldn't fetch data from Finnomena right now. Try refreshing.",
+  loadErrorDesc:
+    "Couldn't fetch data from Finnomena right now. Try refreshing.",
 
   colXd: "Register Close (XD)",
   colPay: "Payment Date",
@@ -64,11 +67,28 @@ const en: Dict = {
   noDividend: "This fund has no dividend history",
   loadMore: "Load more",
   showLess: "Show less",
+
+  // Portfolio / display mode
+  myPortfolio: "My Portfolio",
+  portfolioDesc: "Enter your cost and units per fund to see your own return",
+  displayMode: "Display mode",
+  modeMarket: "Market (today)",
+  modePortfolio: "My portfolio",
+  costLabel: "Cost (THB)",
+  unitsLabel: "Units",
+  currentValue: "Current value",
+  cost: "Cost",
+  profit: "Profit/Loss",
+  yourReturn: "Your return",
+  avgCost: "Avg cost/unit",
+  setupPortfolio: "Set up portfolio",
+  clear: "Clear",
+  close: "Close",
 };
 
 const th: Dict = {
   installApp: "ติดตั้งแอป",
-  iosInstallHint: "วิธีติดตั้ง: แตะปุ่มแชร์ แล้วเลือก \"เพิ่มไปยังหน้าจอโฮม\"",
+  iosInstallHint: 'วิธีติดตั้ง: แตะปุ่มแชร์ แล้วเลือก "เพิ่มไปยังหน้าจอโฮม"',
   menu: "เมนู",
   preference: "การตั้งค่า",
   themeLight: "สว่าง",
@@ -77,13 +97,13 @@ const th: Dict = {
   language: "ภาษา",
 
   overview: "ภาพรวมกองทุน",
-  liveData: "ข้อมูลสดจาก Finnomena",
+  liveData: "ข้อมูลจริงจาก Finnomena",
   updated: "อัปเดต {time}",
   footer:
     "ข้อมูล NAV / ปันผล จาก Finnomena (finnomena.com) · เพื่อการติดตามเท่านั้น ไม่ใช่คำแนะนำการลงทุน",
 
   risk: "ความเสี่ยง {n}",
-  live: "ข้อมูลสด",
+  live: "ข้อมูลจริง",
   na: "N/A",
   loadFailed: "โหลดข้อมูลไม่สำเร็จ",
   perUnit: "บาท/หน่วย",
@@ -104,11 +124,13 @@ const th: Dict = {
   sectorDesc: "แบ่งตามกลุ่มอุตสาหกรรมของหลักทรัพย์ที่ลงทุน",
   noData: "ไม่มีข้อมูล",
   dividendHistory: "ประวัติการจ่ายเงินปันผล",
-  dividendHistoryDesc: "วันปิดสมุดทะเบียน (XD), วันที่จ่าย และจำนวนเงินปันผลต่อหน่วย",
+  dividendHistoryDesc:
+    "วันปิดสมุดทะเบียน (XD), วันที่จ่าย และจำนวนเงินปันผลต่อหน่วย",
   navAsOf: "NAV ณ {date}",
   viewSource: "ดูข้อมูลต้นทางบน Finnomena",
   loadErrorTitle: "{symbol} — โหลดข้อมูลไม่สำเร็จ",
-  loadErrorDesc: "ไม่สามารถดึงข้อมูลจาก Finnomena ได้ในขณะนี้ ลองรีเฟรชอีกครั้ง",
+  loadErrorDesc:
+    "ไม่สามารถดึงข้อมูลจาก Finnomena ได้ในขณะนี้ ลองรีเฟรชอีกครั้ง",
 
   colXd: "วันปิดสมุดทะเบียน (XD)",
   colPay: "วันที่จ่าย",
@@ -117,6 +139,23 @@ const th: Dict = {
   noDividend: "กองทุนนี้ไม่มีประวัติการจ่ายเงินปันผล",
   loadMore: "ดูเพิ่มเติม",
   showLess: "ย่อลง",
+
+  // Portfolio / display mode
+  myPortfolio: "พอร์ตของฉัน",
+  portfolioDesc: "กรอกต้นทุนและจำนวนหน่วยของแต่ละกองทุนเพื่อดูผลตอบแทนของคุณเอง",
+  displayMode: "โหมดแสดงผล",
+  modeMarket: "ตลาด (วันนี้)",
+  modePortfolio: "พอร์ตของฉัน",
+  costLabel: "ต้นทุน (บาท)",
+  unitsLabel: "จำนวนหน่วย",
+  currentValue: "มูลค่าปัจจุบัน",
+  cost: "ต้นทุน",
+  profit: "กำไร/ขาดทุน",
+  yourReturn: "ผลตอบแทนของคุณ",
+  avgCost: "ต้นทุนเฉลี่ย/หน่วย",
+  setupPortfolio: "ตั้งค่าพอร์ต",
+  clear: "ล้าง",
+  close: "ปิด",
 };
 
 const DICTS: Record<Lang, Dict> = { en, th };
@@ -143,7 +182,10 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLangState] = React.useState<Lang>("en");
 
   React.useEffect(() => {
-    const saved = typeof window !== "undefined" ? window.localStorage.getItem("lang") : null;
+    const saved =
+      typeof window !== "undefined"
+        ? window.localStorage.getItem("lang")
+        : null;
     if (saved === "en" || saved === "th") setLangState(saved);
   }, []);
 
@@ -158,7 +200,8 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const t = React.useCallback<I18nValue["t"]>(
-    (key, params) => interpolate(DICTS[lang][key] ?? en[key] ?? String(key), params),
+    (key, params) =>
+      interpolate(DICTS[lang][key] ?? en[key] ?? String(key), params),
     [lang],
   );
 

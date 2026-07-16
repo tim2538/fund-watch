@@ -18,8 +18,15 @@ import { DividendTable } from "@/components/dividend-table";
 import { NavChart } from "@/components/nav-chart";
 import { TopHoldings } from "@/components/top-holdings";
 import { DonutBreakdown } from "@/components/donut-breakdown";
-import { cn, formatBaht, formatDate } from "@/lib/utils";
+import {
+  cn,
+  formatBaht,
+  formatDate,
+  formatPercent,
+  formatSignedBaht,
+} from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
+import { computePosition, usePortfolio } from "@/lib/portfolio";
 import { FINNOMENA_URL, type FundData, type FundSymbol } from "@/lib/funds";
 
 function FinnomenaLink({ symbol }: { symbol: FundSymbol }) {
@@ -59,7 +66,11 @@ export function FundDetail({ fund }: { fund: FundData }) {
     );
   }
 
-  const up = fund.changePercent >= 0;
+  const { displayMode, entries } = usePortfolio();
+  const pos = computePosition(fund, entries[fund.symbol]);
+  const portfolioMode = displayMode === "portfolio";
+  const showPortfolio = portfolioMode && pos != null;
+  const up = showPortfolio ? pos.profit >= 0 : fund.changePercent >= 0;
   return (
     <div className="space-y-4">
       <Card>
@@ -98,15 +109,56 @@ export function FundDetail({ fund }: { fund: FundData }) {
                 ) : (
                   <ArrowDownRight className="h-4 w-4" />
                 )}
-                {up ? "+" : ""}
-                {formatBaht(fund.change)} ({up ? "+" : ""}
-                {fund.changePercent.toFixed(2)}%)
+                {showPortfolio ? (
+                  <>
+                    {formatSignedBaht(pos.profit)} (
+                    {formatPercent(pos.returnPercent)})
+                  </>
+                ) : (
+                  <>
+                    {up ? "+" : ""}
+                    {formatBaht(fund.change)} ({formatPercent(fund.changePercent)}
+                    )
+                  </>
+                )}
               </div>
               <div className="mt-0.5 text-[11px] text-muted-foreground">
                 {t("navAsOf", { date: formatDate(fund.navDate, locale) })}
               </div>
             </div>
           </div>
+
+          {showPortfolio && (
+            <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 border-t pt-3 text-xs tabular-nums sm:grid-cols-4">
+              <div>
+                <div className="text-muted-foreground">{t("currentValue")}</div>
+                <div className="font-medium">
+                  {formatBaht(pos.currentValue, 2)}
+                </div>
+              </div>
+              <div>
+                <div className="text-muted-foreground">{t("cost")}</div>
+                <div className="font-medium">{formatBaht(pos.cost, 2)}</div>
+              </div>
+              <div>
+                <div className="text-muted-foreground">{t("profit")}</div>
+                <div
+                  className={cn(
+                    "font-medium",
+                    up
+                      ? "text-emerald-600 dark:text-emerald-400"
+                      : "text-red-600 dark:text-red-400",
+                  )}
+                >
+                  {formatSignedBaht(pos.profit)}
+                </div>
+              </div>
+              <div>
+                <div className="text-muted-foreground">{t("avgCost")}</div>
+                <div className="font-medium">{formatBaht(pos.avgCost)}</div>
+              </div>
+            </div>
+          )}
         </CardHeader>
       </Card>
 

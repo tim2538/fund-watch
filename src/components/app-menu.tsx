@@ -14,10 +14,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useI18n, type Lang } from "@/lib/i18n";
+import { usePortfolio, type DisplayMode } from "@/lib/portfolio";
 
 export function AppMenu() {
   const { theme, setTheme } = useTheme();
   const { lang, setLang, t } = useI18n();
+  const { displayMode, setDisplayMode } = usePortfolio();
 
   return (
     <DropdownMenu>
@@ -43,6 +45,21 @@ export function AppMenu() {
         >
           <DropdownMenuRadioItem value="en">EN</DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="th">TH</DropdownMenuRadioItem>
+        </DropdownMenuRadioGroup>
+
+        <DropdownMenuSeparator />
+
+        <DropdownMenuLabel>{t("displayMode")}</DropdownMenuLabel>
+        <DropdownMenuRadioGroup
+          value={displayMode}
+          onValueChange={(v) => setDisplayMode(v as DisplayMode)}
+        >
+          <DropdownMenuRadioItem value="market">
+            {t("modeMarket")}
+          </DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="portfolio">
+            {t("modePortfolio")}
+          </DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>

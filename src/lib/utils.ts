@@ -12,6 +12,16 @@ export function formatBaht(value: number, digits = 4): string {
   }).format(value);
 }
 
+/** Format a percentage with an explicit sign (e.g. +12.34% / -5.00%). */
+export function formatPercent(value: number, digits = 2): string {
+  return `${value >= 0 ? "+" : ""}${value.toFixed(digits)}%`;
+}
+
+/** Format a signed baht amount with a leading + for gains (e.g. +1,234.56). */
+export function formatSignedBaht(value: number, digits = 2): string {
+  return `${value >= 0 ? "+" : ""}${formatBaht(value, digits)}`;
+}
+
 /**
  * Format an ISO date for the given Intl locale.
  * Parses YYYY-MM-DD as a *local* calendar date so the output is identical on

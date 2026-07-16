@@ -3,8 +3,15 @@
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { cn, formatBaht, formatDate } from "@/lib/utils";
+import {
+  cn,
+  formatBaht,
+  formatDate,
+  formatPercent,
+  formatSignedBaht,
+} from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
+import { computePosition, usePortfolio } from "@/lib/portfolio";
 import type { FundData } from "@/lib/funds";
 
 export function FundSummaryCard({
@@ -17,7 +24,10 @@ export function FundSummaryCard({
   onClick?: () => void;
 }) {
   const { t, locale } = useI18n();
-  const up = fund.changePercent >= 0;
+  const { displayMode, entries } = usePortfolio();
+  const pos = computePosition(fund, entries[fund.symbol]);
+  const portfolioMode = displayMode === "portfolio";
+  const up = portfolioMode && pos ? pos.profit >= 0 : fund.changePercent >= 0;
   return (
     <Card
       role={onClick ? "button" : undefined}
@@ -43,15 +53,20 @@ export function FundSummaryCard({
               {fund.name}
             </div>
           </div>
-          {fund.ok ? (
-            <Badge variant={up ? "success" : "danger"} className="gap-1 shrink-0">
-              {up ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
-              {up ? "+" : ""}
-              {fund.changePercent.toFixed(2)}%
-            </Badge>
-          ) : (
+          {!fund.ok ? (
             <Badge variant="secondary" className="shrink-0">
               {t("na")}
+            </Badge>
+          ) : portfolioMode && !pos ? (
+            <Badge variant="secondary" className="shrink-0 font-normal">
+              {t("setupPortfolio")}
+            </Badge>
+          ) : (
+            <Badge variant={up ? "success" : "danger"} className="gap-1 shrink-0">
+              {up ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
+              {portfolioMode && pos
+                ? formatPercent(pos.returnPercent)
+                : formatPercent(fund.changePercent)}
             </Badge>
           )}
         </div>
@@ -63,18 +78,40 @@ export function FundSummaryCard({
               <span className="text-2xl font-bold tabular-nums">{formatBaht(fund.nav)}</span>
               <span className="text-xs text-muted-foreground">{t("perUnit")}</span>
             </div>
-            <div
-              className={cn(
-                "mt-1 text-xs tabular-nums",
-                up ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400",
-              )}
-            >
-              {up ? "+" : ""}
-              {formatBaht(fund.change)} {t("today")}
-            </div>
-            <div className="mt-2 text-[11px] text-muted-foreground">
-              {t("asOf", { date: formatDate(fund.navDate, locale) })}
-            </div>
+            {portfolioMode && pos ? (
+              <>
+                <div
+                  className={cn(
+                    "mt-1 text-xs tabular-nums",
+                    up
+                      ? "text-emerald-600 dark:text-emerald-400"
+                      : "text-red-600 dark:text-red-400",
+                  )}
+                >
+                  {formatSignedBaht(pos.profit)} {t("profit")}
+                </div>
+                <div className="mt-2 text-[11px] text-muted-foreground tabular-nums">
+                  {t("currentValue")}: {formatBaht(pos.currentValue, 2)}
+                </div>
+              </>
+            ) : (
+              <>
+                <div
+                  className={cn(
+                    "mt-1 text-xs tabular-nums",
+                    up
+                      ? "text-emerald-600 dark:text-emerald-400"
+                      : "text-red-600 dark:text-red-400",
+                  )}
+                >
+                  {up ? "+" : ""}
+                  {formatBaht(fund.change)} {t("today")}
+                </div>
+                <div className="mt-2 text-[11px] text-muted-foreground">
+                  {t("asOf", { date: formatDate(fund.navDate, locale) })}
+                </div>
+              </>
+            )}
           </>
         ) : (
           <p className="py-2 text-sm text-muted-foreground">{t("loadFailed")}</p>

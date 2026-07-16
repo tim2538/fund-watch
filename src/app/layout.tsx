@@ -3,6 +3,7 @@ import Script from "next/script";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { I18nProvider } from "@/lib/i18n";
+import { PortfolioProvider } from "@/lib/portfolio";
 
 // NOTE: The manifest <link> and icons are injected by the inline script below
 // (not via Next metadata). Next has a known bug where basePath is NOT applied to
@@ -53,7 +54,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <I18nProvider>{children}</I18nProvider>
+          <I18nProvider>
+            <PortfolioProvider>{children}</PortfolioProvider>
+          </I18nProvider>
         </ThemeProvider>
       </body>
     </html>
