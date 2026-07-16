@@ -29,6 +29,9 @@
     --chart-3: 25 95% 53%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+    /* NAV line — matches the app's change indicators (emerald-600 / red-600) */
+    --chart-up: 160 84% 39%;
+    --chart-down: 0 72% 51%;
   }
 
   .dark {
@@ -56,6 +59,9 @@
     --chart-3: 25 95% 58%;
     --chart-4: 280 65% 65%;
     --chart-5: 340 75% 60%;
+    /* NAV line — matches the app's change indicators (emerald-400 / red-400) */
+    --chart-up: 158 64% 52%;
+    --chart-down: 0 91% 71%;
   }
 }
 

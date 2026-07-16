@@ -54,7 +54,7 @@ export function NavChart({
   const data = React.useMemo(() => sliceHistory(history, range), [history, range]);
 
   const up = data.length > 1 && data[data.length - 1].nav >= data[0].nav;
-  const stroke = up ? "hsl(var(--chart-1))" : "hsl(var(--chart-5))";
+  const stroke = up ? "hsl(var(--chart-up))" : "hsl(var(--chart-down))";
 
   const values = data.map((d) => d.nav);
   const min = Math.min(...values);

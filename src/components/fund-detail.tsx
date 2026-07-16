@@ -71,7 +71,7 @@ export function FundDetail({ fund }: { fund: FundData }) {
                 {fund.amc} · {fund.category} · {t("dividendLabel")}: {fund.dividendPolicy || "-"}
               </div>
             </div>
-            <div className="text-right">
+            <div className="ml-auto text-right">
               <div className="text-2xl font-bold tabular-nums">{formatBaht(fund.nav)}</div>
               <div
                 className={cn(
