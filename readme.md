@@ -36,7 +36,7 @@ npm run start
 ├── public/
 │   ├── manifest.webmanifest # PWA manifest (ใช้ path แบบ relative — รองรับ basePath)
 │   ├── offline.html         # หน้าสำรองตอนออฟไลน์
-│   └── icons/               # ไอคอน PWA (192, 512, maskable, apple-touch)
+│   └── icons/               # ไอคอน PWA (192, 512, apple-touch)
 └── src/
     ├── app/
     │   ├── layout.tsx        # root layout + ThemeProvider + I18nProvider + metadata

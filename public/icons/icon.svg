@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!--
+    Fund Watch — minimal app icon (upward growth line, no text)
+    Format matches the supplied reference:
+      • 512 canvas, everything wrapped in translate(32,32) scale(0.875)
+        so the ROUNDED BACKGROUND is inset too -> 32px transparent margin
+        per side (6.25%/side) around the squircle.
+      • Corner radius rx=112 on the 512 design = 21.9% ratio (iOS ~22% look).
+    Palette: navy #0f172a bg (manifest background_color),
+             emerald #10b981 mark (manifest theme_color).
+  -->
+  <defs>
+    <linearGradient id="mark" x1="116" y1="326" x2="396" y2="186" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#34d399"/>
+      <stop offset="0.55" stop-color="#10b981"/>
+      <stop offset="1" stop-color="#059669"/>
+    </linearGradient>
+  </defs>
+
+  <g transform="translate(32, 32) scale(0.875)">
+    <!-- Rounded background, inset by the wrapping transform -->
+    <rect width="512" height="512" rx="112" ry="112" fill="#0f172a"/>
+
+    <!-- Minimal trending-up mark -->
+    <g fill="none" stroke="url(#mark)" stroke-width="38"
+       stroke-linecap="round" stroke-linejoin="round">
+      <path d="M116 326 L207 235 L277 305 L396 186"/>  <!-- growth line -->
+      <path d="M312 186 L396 186 L396 270"/>            <!-- arrow head -->
+    </g>
+  </g>
+</svg>

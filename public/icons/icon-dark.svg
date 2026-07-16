@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!--
+    Fund Watch — DARK-MODE app icon (upward growth line, no text)
+    Same format as icon.svg:
+      • 512 canvas, all wrapped in translate(32,32) scale(0.875)
+        -> 32px (6.25%/side) transparent margin around the squircle.
+      • Corner radius rx=112 = 21.9% ratio (iOS ~22% look).
+    Dark-mode tuning vs icon.svg:
+      • Deeper near-black background gradient (#111a2e -> #060a14) so it
+        settles into dark / OLED UI instead of glowing as a flat navy block.
+      • Hairline inner stroke (white @ 8%) so the squircle edge stays
+        defined against a pure-black backdrop.
+      • Brighter emerald mark for contrast on the darker field.
+    Palette: bg near-black navy, mark emerald #6ee7b7 -> #10b981.
+  -->
+  <defs>
+    <linearGradient id="bg-dark" x1="256" y1="0" x2="256" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#111a2e"/>
+      <stop offset="1" stop-color="#060a14"/>
+    </linearGradient>
+    <linearGradient id="mark-dark" x1="116" y1="326" x2="396" y2="186" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#6ee7b7"/>
+      <stop offset="0.55" stop-color="#34d399"/>
+      <stop offset="1" stop-color="#10b981"/>
+    </linearGradient>
+  </defs>
+
+  <g transform="translate(32, 32) scale(0.875)">
+    <!-- Rounded background, inset by the wrapping transform -->
+    <rect width="512" height="512" rx="112" ry="112" fill="url(#bg-dark)"/>
+    <!-- Hairline edge for definition on dark/OLED backgrounds -->
+    <rect x="1.5" y="1.5" width="509" height="509" rx="110.5" ry="110.5"
+          fill="none" stroke="#ffffff" stroke-opacity="0.08" stroke-width="3"/>
+
+    <!-- Minimal trending-up mark -->
+    <g fill="none" stroke="url(#mark-dark)" stroke-width="38"
+       stroke-linecap="round" stroke-linejoin="round">
+      <path d="M116 326 L207 235 L277 305 L396 186"/>  <!-- growth line -->
+      <path d="M312 186 L396 186 L396 270"/>            <!-- arrow head -->
+    </g>
+  </g>
+</svg>
