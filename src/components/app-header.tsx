@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { LineChart } from "lucide-react";
 import { AppMenu } from "@/components/app-menu";
 import { InstallPrompt } from "@/components/install-prompt";
 import { useI18n } from "@/lib/i18n";
@@ -23,9 +22,17 @@ export function AppHeader({ updatedAt }: { updatedAt: string }) {
   return (
     <header className="mb-6 flex items-center justify-between gap-3">
       <div className="flex items-center gap-2.5">
-        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-          <LineChart className="h-5 w-5" />
-        </span>
+        {/* App icon (light) — served from public/icons; basePath-aware for
+            GitHub Pages project sub-paths. The SVG carries its own rounded
+            background, so no wrapper styling is needed. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/icons/icon.svg`}
+          alt="Fund Watch"
+          width={36}
+          height={36}
+          className="h-9 w-9"
+        />
         <div>
           <h1 className="text-lg font-bold leading-tight">Fund Watch</h1>
           <p className="text-xs text-muted-foreground">

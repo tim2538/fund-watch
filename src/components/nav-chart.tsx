@@ -50,7 +50,7 @@ export function NavChart({
   className?: string;
 }) {
   const { locale } = useI18n();
-  const [range, setRange] = React.useState<TimeRange>("1Y");
+  const [range, setRange] = React.useState<TimeRange>("6M");
   const data = React.useMemo(() => sliceHistory(history, range), [history, range]);
 
   const up = data.length > 1 && data[data.length - 1].nav >= data[0].nav;
