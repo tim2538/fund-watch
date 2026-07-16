@@ -34,14 +34,13 @@ npm run start
 ├── tailwind.config.ts       # ธีม shadcn (สี, radius, dark mode)
 ├── components.json          # config ของ shadcn/ui
 ├── public/
-│   ├── manifest.json        # PWA manifest (ชื่อ, ไอคอน, theme color)
+│   ├── manifest.webmanifest # PWA manifest (ใช้ path แบบ relative — รองรับ basePath)
 │   ├── offline.html         # หน้าสำรองตอนออฟไลน์
 │   └── icons/               # ไอคอน PWA (192, 512, maskable, apple-touch)
 └── src/
     ├── app/
     │   ├── layout.tsx        # root layout + ThemeProvider + I18nProvider + metadata
     │   ├── page.tsx          # หน้า Dashboard (Server Component ดึงข้อมูลตอน build)
-    │   ├── manifest.ts       # PWA manifest (basePath-aware)
     │   └── globals.css       # ตัวแปรสีของ shadcn (light/dark)
     ├── components/
     │   ├── ui/               # ส่วนประกอบ shadcn/ui (button, card, tabs, table, ...)
