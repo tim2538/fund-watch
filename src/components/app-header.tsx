@@ -20,8 +20,8 @@ export function AppHeader({ updatedAt }: { updatedAt: string }) {
     : "";
 
   return (
-    <header className="mb-6 flex items-center justify-between gap-3">
-      <div className="flex items-center gap-2.5">
+    <header className="mb-6 flex justify-between gap-3">
+      <div className="flex gap-2.5">
         {/* App icon (light) — served from public/icons; basePath-aware for
             GitHub Pages project sub-paths. The SVG carries its own rounded
             background, so no wrapper styling is needed. */}
@@ -41,7 +41,7 @@ export function AppHeader({ updatedAt }: { updatedAt: string }) {
           </p>
         </div>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex gap-2">
         <InstallPrompt />
         <AppMenu />
       </div>

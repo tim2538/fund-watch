@@ -5,6 +5,7 @@
  *   GET  {code}                 -> fund metadata (name, risk, category, amc, dividend policy)
  *   GET  {code}/nav/q?range=1Y  -> NAV history  { data.navs: [{ date, value, amount }] }
  *   GET  {code}/dividend        -> dividends     { data.dividends: [{ xd_date, value, pay_date }] }
+ *   GET  {code}/portfolio       -> holdings      { data.top_holdings: { data_date, elements: [{ name, percent, color }] } }
  *
  * These are the same public endpoints finnomena.com calls from the browser.
  * If a request fails or returns no NAV history, the fund is returned with
@@ -16,6 +17,7 @@ import {
   type FundSymbol,
   type NavPoint,
   type Dividend,
+  type Holding,
 } from "@/lib/funds";
 
 const API = "https://www.finnomena.com/fn3/api/fund/v2/public/funds";
@@ -66,6 +68,20 @@ function parseDividends(divRes: any): Dividend[] {
     }));
 }
 
+/** Map a portfolio node ({ data_date, elements: [...] }) to Holding[]. */
+function parseElements(node: any): Holding[] {
+  const items: any[] = node?.elements ?? [];
+  return items
+    .filter((e) => e && e.name != null)
+    .map((e) => ({
+      name: String(e.name),
+      percent: Number(e.percent),
+      color: typeof e.color === "string" ? e.color : undefined,
+    }));
+}
+
+const nodeDate = (node: any) => (node?.data_date ? iso(node.data_date) : "");
+
 function fallback(symbol: FundSymbol, meta: any): FundData {
   return {
     symbol,
@@ -83,16 +99,23 @@ function fallback(symbol: FundSymbol, meta: any): FundData {
     netAssets: Number(meta?.data?.net_assets ?? 0),
     history: [],
     dividends: [],
+    topHoldings: [],
+    holdingsDate: "",
+    assetAllocation: [],
+    assetAllocationDate: "",
+    sectorBreakdown: [],
+    sectorDate: "",
     ok: false,
   };
 }
 
 /** Fetch a single fund's live data from Finnomena. */
 export async function getFund(symbol: FundSymbol): Promise<FundData> {
-  const [meta, navRes, divRes] = await Promise.all([
+  const [meta, navRes, divRes, portRes] = await Promise.all([
     fetchJson(`${API}/${symbol}`),
     fetchJson(`${API}/${symbol}/nav/q?range=${HISTORY_RANGE}`),
     fetchJson(`${API}/${symbol}/dividend`),
+    fetchJson(`${API}/${symbol}/portfolio`),
   ]);
 
   const history = parseHistory(navRes);
@@ -123,6 +146,12 @@ export async function getFund(symbol: FundSymbol): Promise<FundData> {
     netAssets: Number(lastNav?.amount ?? 0),
     history,
     dividends: parseDividends(divRes),
+    topHoldings: parseElements(portRes?.data?.top_holdings).slice(0, 5),
+    holdingsDate: nodeDate(portRes?.data?.top_holdings),
+    assetAllocation: parseElements(portRes?.data?.asset_allocation),
+    assetAllocationDate: nodeDate(portRes?.data?.asset_allocation),
+    sectorBreakdown: parseElements(portRes?.data?.global_stock_sector),
+    sectorDate: nodeDate(portRes?.data?.global_stock_sector),
     ok: true,
   };
 }

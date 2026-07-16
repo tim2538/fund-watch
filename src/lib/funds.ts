@@ -21,6 +21,12 @@ export interface Dividend {
   amount: number; // baht per unit
 }
 
+export interface Holding {
+  name: string; // security / fund name
+  percent: number; // % of net assets
+  color?: string; // brand color from Finnomena
+}
+
 export interface FundData {
   symbol: FundSymbol;
   fundId: string;
@@ -37,6 +43,12 @@ export interface FundData {
   netAssets: number; // latest net asset value (baht)
   history: NavPoint[]; // up to ~1y daily NAV (oldest -> newest)
   dividends: Dividend[]; // newest -> oldest
+  topHoldings: Holding[]; // top 5 portfolio holdings
+  holdingsDate: string; // ISO date the holdings were reported
+  assetAllocation: Holding[]; // สัดส่วนการลงทุน (by asset type)
+  assetAllocationDate: string; // ISO date
+  sectorBreakdown: Holding[]; // กลุ่มประเภทตราสารทุน/ตราสารหนี้ที่ลงทุน
+  sectorDate: string; // ISO date
   ok: boolean; // false when the live fetch failed / no data
 }
 

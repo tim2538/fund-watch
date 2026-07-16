@@ -18,21 +18,24 @@ declare global {
 
 export function InstallPrompt() {
   const { t } = useI18n();
-  const [deferred, setDeferred] = React.useState<BeforeInstallPromptEvent | null>(null);
+  const [deferred, setDeferred] =
+    React.useState<BeforeInstallPromptEvent | null>(null);
   const [installed, setInstalled] = React.useState(false);
   const [isIOS, setIsIOS] = React.useState(false);
   const [showHint, setShowHint] = React.useState(false);
 
   React.useEffect(() => {
     // 1) Pick up an event that fired before hydration (captured in layout).
-    if (window.__deferredInstallPrompt) setDeferred(window.__deferredInstallPrompt);
+    if (window.__deferredInstallPrompt)
+      setDeferred(window.__deferredInstallPrompt);
 
     const onPrompt = (e: Event) => {
       e.preventDefault();
       setDeferred(e as BeforeInstallPromptEvent);
     };
     const onCaptured = () => {
-      if (window.__deferredInstallPrompt) setDeferred(window.__deferredInstallPrompt);
+      if (window.__deferredInstallPrompt)
+        setDeferred(window.__deferredInstallPrompt);
     };
     const onInstalled = () => {
       setInstalled(true);
@@ -51,7 +54,8 @@ export function InstallPrompt() {
       (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
     const standalone =
       window.matchMedia("(display-mode: standalone)").matches ||
-      (window.navigator as unknown as { standalone?: boolean }).standalone === true;
+      (window.navigator as unknown as { standalone?: boolean }).standalone ===
+        true;
     if (standalone) setInstalled(true);
     else if (iOS) setIsIOS(true);
 
@@ -70,7 +74,7 @@ export function InstallPrompt() {
       <Button
         variant="outline"
         size="sm"
-        className="gap-2"
+        className="mt-0.5 gap-2"
         onClick={async () => {
           await deferred.prompt();
           await deferred.userChoice;

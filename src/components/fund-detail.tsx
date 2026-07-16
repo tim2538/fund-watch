@@ -1,6 +1,11 @@
 "use client";
 
-import { AlertTriangle, ArrowDownRight, ArrowUpRight, ExternalLink } from "lucide-react";
+import {
+  AlertTriangle,
+  ArrowDownRight,
+  ArrowUpRight,
+  ExternalLink,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -11,6 +16,8 @@ import {
 } from "@/components/ui/card";
 import { DividendTable } from "@/components/dividend-table";
 import { NavChart } from "@/components/nav-chart";
+import { TopHoldings } from "@/components/top-holdings";
+import { DonutBreakdown } from "@/components/donut-breakdown";
 import { cn, formatBaht, formatDate } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { FINNOMENA_URL, type FundData, type FundSymbol } from "@/lib/funds";
@@ -60,7 +67,9 @@ export function FundDetail({ fund }: { fund: FundData }) {
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <CardTitle className="font-mono text-lg">{fund.symbol}</CardTitle>
+                <CardTitle className="font-mono text-lg">
+                  {fund.symbol}
+                </CardTitle>
                 <Badge variant="outline">{t("risk", { n: fund.risk })}</Badge>
                 <Badge variant="success">{t("live")}</Badge>
               </div>
@@ -68,18 +77,27 @@ export function FundDetail({ fund }: { fund: FundData }) {
                 {fund.name} · {fund.nameEn}
               </CardDescription>
               <div className="mt-1 text-xs text-muted-foreground">
-                {fund.amc} · {fund.category} · {t("dividendLabel")}: {fund.dividendPolicy || "-"}
+                {fund.amc} · {fund.category} · {t("dividendLabel")}:{" "}
+                {fund.dividendPolicy || "-"}
               </div>
             </div>
             <div className="ml-auto text-right">
-              <div className="text-2xl font-bold tabular-nums">{formatBaht(fund.nav)}</div>
+              <div className="text-2xl font-bold tabular-nums">
+                {formatBaht(fund.nav)}
+              </div>
               <div
                 className={cn(
                   "flex items-center justify-end gap-1 text-sm tabular-nums",
-                  up ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400",
+                  up
+                    ? "text-emerald-600 dark:text-emerald-400"
+                    : "text-red-600 dark:text-red-400",
                 )}
               >
-                {up ? <ArrowUpRight className="h-4 w-4" /> : <ArrowDownRight className="h-4 w-4" />}
+                {up ? (
+                  <ArrowUpRight className="h-4 w-4" />
+                ) : (
+                  <ArrowDownRight className="h-4 w-4" />
+                )}
                 {up ? "+" : ""}
                 {formatBaht(fund.change)} ({up ? "+" : ""}
                 {fund.changePercent.toFixed(2)}%)
@@ -111,6 +129,59 @@ export function FundDetail({ fund }: { fund: FundData }) {
           <DividendTable dividends={fund.dividends} />
         </CardContent>
       </Card>
+
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base">{t("topHoldings")}</CardTitle>
+          <CardDescription>
+            {t("topHoldingsDesc")}
+            {fund.holdingsDate
+              ? ` · ${t("asOf", { date: formatDate(fund.holdingsDate, locale) })}`
+              : ""}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <TopHoldings holdings={fund.topHoldings} />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base">{t("assetAllocation")}</CardTitle>
+          <CardDescription>
+            {t("assetAllocationDesc")}
+            {fund.assetAllocationDate
+              ? ` · ${t("asOf", { date: formatDate(fund.assetAllocationDate, locale) })}`
+              : ""}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <DonutBreakdown
+            items={fund.assetAllocation}
+            emptyLabel={t("noData")}
+          />
+        </CardContent>
+      </Card>
+
+      {fund.sectorBreakdown.length > 0 && (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">{t("sectorBreakdown")}</CardTitle>
+            <CardDescription>
+              {t("sectorDesc")}
+              {fund.sectorDate
+                ? ` · ${t("asOf", { date: formatDate(fund.sectorDate, locale) })}`
+                : ""}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <DonutBreakdown
+              items={fund.sectorBreakdown}
+              emptyLabel={t("noData")}
+            />
+          </CardContent>
+        </Card>
+      )}
 
       <FinnomenaLink symbol={fund.symbol} />
     </div>
