@@ -39,12 +39,10 @@ npm run start
 │   └── icons/               # ไอคอน PWA (192, 512, maskable, apple-touch)
 └── src/
     ├── app/
-    │   ├── layout.tsx        # root layout + ThemeProvider + metadata/manifest
-    │   ├── page.tsx          # หน้า Dashboard (Server Component ดึงข้อมูล)
-    │   ├── globals.css       # ตัวแปรสีของ shadcn (light/dark)
-    │   └── api/funds/
-    │       ├── route.ts             # GET /api/funds        (สรุปทั้ง 3 กองทุน)
-    │       └── [symbol]/route.ts    # GET /api/funds/BKD?range=1Y
+    │   ├── layout.tsx        # root layout + ThemeProvider + I18nProvider + metadata
+    │   ├── page.tsx          # หน้า Dashboard (Server Component ดึงข้อมูลตอน build)
+    │   ├── manifest.ts       # PWA manifest (basePath-aware)
+    │   └── globals.css       # ตัวแปรสีของ shadcn (light/dark)
     ├── components/
     │   ├── ui/               # ส่วนประกอบ shadcn/ui (button, card, tabs, table, ...)
     │   ├── fund-dashboard.tsx    # การ์ดสรุป + Tabs สลับกองทุน

@@ -82,9 +82,10 @@ For normal local development (no sub-path), just run `npm run dev` and open
   production only. The manifest (`src/app/manifest.ts`) and icons include the
   basePath so "Add to Home Screen" works under `/fund-watch/`. If the service
   worker 404s after a rename, hard-refresh once to clear the old registration.
-- **API routes** (`/api/funds`, `/api/funds/[symbol]`) are exported as static JSON
-  files at build time. The dashboard itself doesn't depend on them (data is
-  embedded in the page), so the app works fully offline.
+- **No API routes.** The dashboard fetches Finnomena and embeds all fund data
+  into the page at build time, so the app works fully offline. (Route handlers
+  were removed because a `/api/funds` file collides with the `/api/funds/*`
+  folder during static export — `EISDIR`.)
 - **Custom domain?** Add a `public/CNAME` file with your domain and set
   `NEXT_PUBLIC_BASE_PATH:` to empty in the workflow.
 - Data shown reflects the last build/refresh time, not real-time NAV.

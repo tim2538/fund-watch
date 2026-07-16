@@ -11,6 +11,11 @@ on:
   schedule:
     - cron: "0 1 * * *"
 
+# Force any not-yet-updated JS actions (e.g. upload-pages-artifact) onto Node 24
+# so they don't emit the Node 20 deprecation warning.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 # Permissions required by actions/deploy-pages
 permissions:
   contents: read
@@ -31,12 +36,12 @@ jobs:
       NEXT_PUBLIC_BASE_PATH: /fund-watch
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - name: Install dependencies
@@ -62,4 +67,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
