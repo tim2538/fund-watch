@@ -15,6 +15,7 @@ type Dict = Record<string, string>;
 
 const en: Dict = {
   installApp: "Install app",
+  iosInstallHint: "To install: tap the Share button, then choose \"Add to Home Screen\".",
   menu: "Menu",
   preference: "Preference",
   themeLight: "Light",
@@ -57,6 +58,7 @@ const en: Dict = {
 
 const th: Dict = {
   installApp: "ติดตั้งแอป",
+  iosInstallHint: "วิธีติดตั้ง: แตะปุ่มแชร์ แล้วเลือก \"เพิ่มไปยังหน้าจอโฮม\"",
   menu: "เมนู",
   preference: "การตั้งค่า",
   themeLight: "สว่าง",

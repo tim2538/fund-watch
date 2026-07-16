@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { I18nProvider } from "@/lib/i18n";
@@ -41,6 +42,11 @@ export default function RootLayout({
   return (
     <html lang="th" suppressHydrationWarning>
       <body className="min-h-screen bg-background antialiased">
+        {/* Capture the install event before React hydrates so the button
+            never misses it (Chrome fires beforeinstallprompt very early). */}
+        <Script id="pwa-install-capture" strategy="beforeInteractive">
+          {`window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();window.__deferredInstallPrompt=e;window.dispatchEvent(new Event('pwa-installable'));});`}
+        </Script>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
