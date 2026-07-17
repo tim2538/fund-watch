@@ -74,7 +74,8 @@
     -webkit-font-smoothing: antialiased;
     font-family:
       -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-      "Helvetica Neue", Arial, "TH Sarabun New", "Sarabun", sans-serif;
+      "Helvetica Neue", Arial, var(--font-sarabun), "TH Sarabun New",
+      sans-serif;
   }
 }
 

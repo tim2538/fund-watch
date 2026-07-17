@@ -1,9 +1,18 @@
 import type { Metadata, Viewport } from "next";
+import { Sarabun } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
+import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
 import { I18nProvider } from "@/lib/i18n";
 import { PortfolioProvider } from "@/lib/portfolio";
+
+const sarabun = Sarabun({
+  subsets: ["thai"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-sarabun",
+  display: "swap",
+});
 
 // NOTE: The manifest <link> and icons are injected by the inline script below
 // (not via Next metadata). Next has a known bug where basePath is NOT applied to
@@ -38,7 +47,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="th" suppressHydrationWarning>
-      <body className="min-h-screen bg-background antialiased">
+      <body
+        className={cn(
+          "min-h-screen bg-background antialiased",
+          sarabun.variable,
+        )}
+      >
         {/* (1) Inject the manifest + apple-touch-icon links pointing at the
             *actual* URL directory, so they resolve under any basePath
             (e.g. /fund-watch/manifest.webmanifest) — Next doesn't do this
