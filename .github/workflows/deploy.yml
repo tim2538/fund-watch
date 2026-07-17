@@ -7,9 +7,14 @@ on:
   # Allow manual runs from the Actions tab
   workflow_dispatch:
   # Rebuild daily to refresh Finnomena data (data is baked in at build time).
-  # 01:00 UTC = 08:00 Asia/Bangkok. Adjust or remove as you like.
+  # Target: land between 11:00 and 13:00 Asia/Bangkok.
+  # Times are UTC; Bangkok is UTC+7 year-round (no DST).
+  # GitHub runs cron on a best-effort shared queue and often delays on-the-hour
+  # slots by 10-60min (or drops them), so these sit off the hour and there are
+  # two of them in case the first is skipped.
   schedule:
-    - cron: "0 1 * * *"
+    - cron: "7 4 * * *"    # 11:07 BKK + queue delay -> ~11:07-12:07
+    - cron: "51 4 * * *"   # 11:51 BKK + queue delay -> ~11:51-12:51 (backup)
 
 # Force any not-yet-updated JS actions (e.g. upload-pages-artifact) onto Node 24
 # so they don't emit the Node 20 deprecation warning.
