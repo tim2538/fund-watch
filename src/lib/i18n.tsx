@@ -53,14 +53,14 @@ const en: Dict = {
   noData: "No data available",
   dividendHistory: "Dividend History",
   dividendHistoryDesc:
-    "Register-close (XD) date, payment date and dividend per unit",
+    "Register-close date, payment date and dividend per unit",
   navAsOf: "NAV as of {date}",
   viewSource: "View source on Finnomena",
   loadErrorTitle: "{symbol} — failed to load",
   loadErrorDesc:
     "Couldn't fetch data from Finnomena right now. Try refreshing.",
 
-  colXd: "Register Close (XD)",
+  colXd: "Register Close",
   colPay: "Payment Date",
   colAmount: "Dividend (THB/unit)",
   total: "Total",
@@ -131,14 +131,14 @@ const th: Dict = {
   noData: "ไม่มีข้อมูล",
   dividendHistory: "ประวัติการจ่ายเงินปันผล",
   dividendHistoryDesc:
-    "วันปิดสมุดทะเบียน (XD), วันที่จ่าย และจำนวนเงินปันผลต่อหน่วย",
+    "วันปิดสมุดทะเบียน, วันที่จ่าย และจำนวนเงินปันผลต่อหน่วย",
   navAsOf: "NAV ณ {date}",
   viewSource: "ดูข้อมูลต้นทางบน Finnomena",
   loadErrorTitle: "{symbol} — โหลดข้อมูลไม่สำเร็จ",
   loadErrorDesc:
     "ไม่สามารถดึงข้อมูลจาก Finnomena ได้ในขณะนี้ ลองรีเฟรชอีกครั้ง",
 
-  colXd: "วันปิดสมุดทะเบียน (XD)",
+  colXd: "วันปิดสมุดทะเบียน",
   colPay: "วันที่จ่าย",
   colAmount: "เงินปันผล (บาท/หน่วย)",
   total: "รวมทั้งหมด",

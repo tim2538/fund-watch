@@ -40,7 +40,7 @@ export function FundSummaryCard({
         }
       }}
       className={cn(
-        "transition-all",
+        "min-w-0 transition-all",
         onClick && "cursor-pointer hover:border-primary/40 hover:shadow-md",
         active && "border-primary ring-1 ring-primary",
       )}

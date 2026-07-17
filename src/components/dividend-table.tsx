@@ -43,11 +43,6 @@ export function DividendTable({ dividends }: { dividends: Dividend[] }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {/* Total row pinned to the top */}
-          <TableRow className="bg-muted/50 font-semibold hover:bg-muted/50">
-            <TableCell colSpan={2}>{t("total")}</TableCell>
-            <TableCell className="text-right tabular-nums">{formatBaht(total, 2)}</TableCell>
-          </TableRow>
           {rows.map((d) => (
             <TableRow key={d.xdDate}>
               <TableCell className="font-medium">{formatDate(d.xdDate, locale)}</TableCell>
@@ -85,6 +80,15 @@ export function DividendTable({ dividends }: { dividends: Dividend[] }) {
           )}
         </div>
       )}
+
+      <Table>
+        <TableBody>
+          <TableRow className="bg-muted/50 font-semibold hover:bg-muted/50">
+            <TableCell colSpan={2}>{t("total")}</TableCell>
+            <TableCell className="text-right tabular-nums">{formatBaht(total, 2)}</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
     </div>
   );
 }
