@@ -23,7 +23,7 @@ export function FundSummaryCard({
   active?: boolean;
   onClick?: () => void;
 }) {
-  const { t, locale } = useI18n();
+  const { t, lang, locale } = useI18n();
   const { displayMode, entries } = usePortfolio();
   const pos = computePosition(fund, entries[fund.symbol]);
   const portfolioMode = displayMode === "portfolio";
@@ -49,8 +49,11 @@ export function FundSummaryCard({
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
             <div className="font-mono text-sm font-semibold">{fund.symbol}</div>
-            <div className="truncate text-xs text-muted-foreground" title={fund.name}>
-              {fund.name}
+            <div
+              className="truncate text-xs text-muted-foreground"
+              title={lang === "th" ? fund.name : fund.nameEn}
+            >
+              {lang === "th" ? fund.name : fund.nameEn}
             </div>
           </div>
           {!fund.ok ? (

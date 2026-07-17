@@ -28,7 +28,7 @@ const en: Dict = {
   liveData: "Live data from Finnomena",
   updated: "Updated {time}",
   footer:
-    "NAV / dividend data from Finnomena (finnomena.com) · For tracking only, not investment advice",
+    "NAV / dividend data from Finnomena · For tracking only, not investment advice",
 
   risk: "Risk {n}",
   live: "Live",
@@ -100,7 +100,7 @@ const th: Dict = {
   liveData: "ข้อมูลจริงจาก Finnomena",
   updated: "อัปเดต {time}",
   footer:
-    "ข้อมูล NAV / ปันผล จาก Finnomena (finnomena.com) · เพื่อการติดตามเท่านั้น ไม่ใช่คำแนะนำการลงทุน",
+    "ข้อมูล NAV / ปันผล จาก Finnomena · เพื่อการติดตามเท่านั้น ไม่ใช่คำแนะนำการลงทุน",
 
   risk: "ความเสี่ยง {n}",
   live: "ข้อมูลจริง",
@@ -142,7 +142,8 @@ const th: Dict = {
 
   // Portfolio / display mode
   myPortfolio: "พอร์ตของฉัน",
-  portfolioDesc: "กรอกต้นทุนและจำนวนหน่วยของแต่ละกองทุนเพื่อดูผลตอบแทนของคุณเอง",
+  portfolioDesc:
+    "กรอกต้นทุนและจำนวนหน่วยของแต่ละกองทุนเพื่อดูผลตอบแทนของคุณเอง",
   displayMode: "โหมดแสดงผล",
   modeMarket: "ตลาด (วันนี้)",
   modePortfolio: "พอร์ตของฉัน",

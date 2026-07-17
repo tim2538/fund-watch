@@ -24,16 +24,27 @@ export function AppMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon" aria-label={t("menu")}>
+        <Button
+          variant="outline"
+          size="icon"
+          className="bg-card"
+          aria-label={t("menu")}
+        >
           <Menu className="h-[1.2rem] w-[1.2rem]" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-52">
         <DropdownMenuLabel>{t("preference")}</DropdownMenuLabel>
         <DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
-          <DropdownMenuRadioItem value="light">{t("themeLight")}</DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="dark">{t("themeDark")}</DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="system">{t("themeSystem")}</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="light">
+            {t("themeLight")}
+          </DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="dark">
+            {t("themeDark")}
+          </DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="system">
+            {t("themeSystem")}
+          </DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
 
         <DropdownMenuSeparator />

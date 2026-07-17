@@ -45,7 +45,7 @@ function FinnomenaLink({ symbol }: { symbol: FundSymbol }) {
 }
 
 export function FundDetail({ fund }: { fund: FundData }) {
-  const { t, locale } = useI18n();
+  const { t, lang, locale } = useI18n();
 
   if (!fund.ok) {
     return (
@@ -85,7 +85,7 @@ export function FundDetail({ fund }: { fund: FundData }) {
                 <Badge variant="success">{t("live")}</Badge>
               </div>
               <CardDescription className="mt-1">
-                {fund.name} · {fund.nameEn}
+                {lang === "th" ? fund.name : fund.nameEn}
               </CardDescription>
               <div className="mt-1 text-xs text-muted-foreground">
                 {fund.amc} · {fund.category} · {t("dividendLabel")}:{" "}
@@ -117,8 +117,8 @@ export function FundDetail({ fund }: { fund: FundData }) {
                 ) : (
                   <>
                     {up ? "+" : ""}
-                    {formatBaht(fund.change)} ({formatPercent(fund.changePercent)}
-                    )
+                    {formatBaht(fund.change)} (
+                    {formatPercent(fund.changePercent)})
                   </>
                 )}
               </div>
@@ -235,7 +235,9 @@ export function FundDetail({ fund }: { fund: FundData }) {
         </Card>
       )}
 
-      <FinnomenaLink symbol={fund.symbol} />
+      <div className="text-right">
+        <FinnomenaLink symbol={fund.symbol} />
+      </div>
     </div>
   );
 }

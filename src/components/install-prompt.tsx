@@ -74,7 +74,7 @@ export function InstallPrompt() {
       <Button
         variant="outline"
         size="sm"
-        className="mt-0.5 gap-2"
+        className="mt-0.5 gap-2 bg-card"
         onClick={async () => {
           await deferred.prompt();
           await deferred.userChoice;
@@ -95,7 +95,7 @@ export function InstallPrompt() {
         <Button
           variant="outline"
           size="sm"
-          className="gap-2"
+          className="gap-2 bg-card"
           onClick={() => setShowHint((v) => !v)}
         >
           <Share className="h-4 w-4" />

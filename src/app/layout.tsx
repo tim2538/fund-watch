@@ -11,10 +11,9 @@ import { PortfolioProvider } from "@/lib/portfolio";
 // the browser would fetch /manifest.webmanifest at the domain root (404) and the
 // PWA becomes non-installable. Injecting from the real URL is basePath-proof.
 export const metadata: Metadata = {
-  title: "Fund Watch — ดูข้อมูลกองทุนรวม",
+  title: "Fund Watch",
   description:
-    "ดู NAV กราฟผลการดำเนินงาน และประวัติการจ่ายปันผลของกองทุน BKD, BSIRICG และ B-CHINE-EQ",
-  applicationName: "Fund Watch",
+    "ดูข้อมูลกองทุนรวม NAV กราฟผลการดำเนินงาน และประวัติการจ่ายปันผล",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -24,8 +23,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#10b981" },
-    { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
+    { media: "(prefers-color-scheme: light)", color: "#f8fafc" },
+    { media: "(prefers-color-scheme: dark)", color: "#020817" },
   ],
   width: "device-width",
   initialScale: 1,

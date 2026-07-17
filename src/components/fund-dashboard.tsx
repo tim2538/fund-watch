@@ -27,7 +27,7 @@ export function FundDashboard({ funds }: { funds: FundData[] }) {
           <Button
             variant="outline"
             size="sm"
-            className="gap-1.5"
+            className="gap-1.5 bg-card"
             onClick={() => setPortfolioOpen(true)}
           >
             <Wallet className="h-4 w-4" />
@@ -53,7 +53,11 @@ export function FundDashboard({ funds }: { funds: FundData[] }) {
       >
         <TabsList className="grid w-full grid-cols-3">
           {funds.map((f) => (
-            <TabsTrigger key={f.symbol} value={f.symbol} className="font-mono text-xs sm:text-sm">
+            <TabsTrigger
+              key={f.symbol}
+              value={f.symbol}
+              className="font-mono text-xs sm:text-sm"
+            >
               {f.symbol}
             </TabsTrigger>
           ))}

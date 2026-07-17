@@ -20,6 +20,46 @@ function parseNum(v: string): number {
   return Number.isFinite(n) && n >= 0 ? n : 0;
 }
 
+/** Number input that shows thousand separators while not focused. */
+function ThousandsInput({
+  value,
+  onChange,
+  placeholder = "0",
+}: {
+  value: number;
+  onChange: (n: number) => void;
+  placeholder?: string;
+}) {
+  const [focused, setFocused] = React.useState(false);
+  const [text, setText] = React.useState("");
+
+  const display = focused
+    ? text
+    : value
+      ? value.toLocaleString("en-US", { maximumFractionDigits: 8 })
+      : "";
+
+  return (
+    <Input
+      type="text"
+      inputMode="decimal"
+      placeholder={placeholder}
+      value={display}
+      onFocus={() => {
+        setFocused(true);
+        setText(value ? String(value) : "");
+      }}
+      onChange={(e) => {
+        const raw = e.target.value.replace(/,/g, "");
+        if (!/^\d*\.?\d*$/.test(raw)) return;
+        setText(raw);
+        onChange(parseNum(raw));
+      }}
+      onBlur={() => setFocused(false)}
+    />
+  );
+}
+
 function ModeToggle() {
   const { t } = useI18n();
   const { displayMode, setDisplayMode } = usePortfolio();
@@ -54,19 +94,20 @@ function ModeToggle() {
 }
 
 function FundRow({ fund }: { fund: FundData }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { entries, setEntry, clearEntry } = usePortfolio();
   const entry = entries[fund.symbol];
   const pos = computePosition(fund, entry);
   const up = pos ? pos.profit >= 0 : false;
+  const displayName = lang === "th" ? fund.name : fund.nameEn;
 
   return (
     <div className="rounded-md border p-3">
       <div className="mb-2 flex items-center justify-between gap-2">
         <div className="min-w-0">
           <div className="font-mono text-sm font-semibold">{fund.symbol}</div>
-          <div className="truncate text-xs text-muted-foreground" title={fund.name}>
-            {fund.name}
+          <div className="truncate text-xs text-muted-foreground" title={displayName}>
+            {displayName}
           </div>
         </div>
         {entry && (
@@ -85,32 +126,18 @@ function FundRow({ fund }: { fund: FundData }) {
           <span className="mb-1 block text-xs text-muted-foreground">
             {t("costLabel")}
           </span>
-          <Input
-            type="number"
-            inputMode="decimal"
-            min={0}
-            step="any"
-            placeholder="0"
-            value={entry?.cost ? String(entry.cost) : ""}
-            onChange={(e) =>
-              setEntry(fund.symbol, { cost: parseNum(e.target.value) })
-            }
+          <ThousandsInput
+            value={entry?.cost ?? 0}
+            onChange={(n) => setEntry(fund.symbol, { cost: n })}
           />
         </label>
         <label className="block">
           <span className="mb-1 block text-xs text-muted-foreground">
             {t("unitsLabel")}
           </span>
-          <Input
-            type="number"
-            inputMode="decimal"
-            min={0}
-            step="any"
-            placeholder="0"
-            value={entry?.units ? String(entry.units) : ""}
-            onChange={(e) =>
-              setEntry(fund.symbol, { units: parseNum(e.target.value) })
-            }
+          <ThousandsInput
+            value={entry?.units ?? 0}
+            onChange={(n) => setEntry(fund.symbol, { units: n })}
           />
         </label>
       </div>
