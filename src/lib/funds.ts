@@ -6,7 +6,7 @@
  * `ok: false` and the UI shows an error state.
  */
 
-export type FundSymbol = "BKD" | "BSIRICG" | "B-CHINE-EQ";
+export type FundSymbol = "BKD" | "BSIRICG" | "B-CHINE-EQ" | "BFIXED" | "SCBSET50";
 
 export type TimeRange = "1M" | "3M" | "6M" | "YTD" | "1Y";
 
@@ -52,12 +52,20 @@ export interface FundData {
   ok: boolean; // false when the live fetch failed / no data
 }
 
-export const FUND_SYMBOLS: FundSymbol[] = ["BKD", "BSIRICG", "B-CHINE-EQ"];
+export const FUND_SYMBOLS: FundSymbol[] = [
+  "BKD",
+  "BSIRICG",
+  "B-CHINE-EQ",
+  "BFIXED",
+  "SCBSET50",
+];
 
 export const FINNOMENA_URL: Record<FundSymbol, string> = {
   BKD: "https://www.finnomena.com/fund/BKD",
   BSIRICG: "https://www.finnomena.com/fund/BSIRICG",
   "B-CHINE-EQ": "https://www.finnomena.com/fund/B-CHINE-EQ",
+  BFIXED: "https://www.finnomena.com/fund/BFIXED",
+  SCBSET50: "https://www.finnomena.com/fund/SCBSET50",
 };
 
 /** Slice a full history down to the requested range. */

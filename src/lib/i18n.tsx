@@ -84,6 +84,12 @@ const en: Dict = {
   setupPortfolio: "Set up portfolio",
   clear: "Clear",
   close: "Close",
+  manageFunds: "Manage funds",
+  moveUp: "Move up",
+  moveDown: "Move down",
+  hideFund: "Hide fund",
+  showFund: "Show fund",
+  hiddenLabel: "Hidden",
 };
 
 const th: Dict = {
@@ -157,6 +163,12 @@ const th: Dict = {
   setupPortfolio: "ตั้งค่าพอร์ต",
   clear: "ล้าง",
   close: "ปิด",
+  manageFunds: "จัดการกองทุน",
+  moveUp: "เลื่อนขึ้น",
+  moveDown: "เลื่อนลง",
+  hideFund: "ซ่อนกองทุน",
+  showFund: "แสดงกองทุน",
+  hiddenLabel: "ซ่อนอยู่",
 };
 
 const DICTS: Record<Lang, Dict> = { en, th };

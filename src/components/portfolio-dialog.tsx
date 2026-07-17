@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { ChevronDown, ChevronUp, Eye, EyeOff } from "lucide-react";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,7 @@ import { cn, formatBaht, formatPercent, formatSignedBaht } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import {
   computePosition,
+  orderFunds,
   usePortfolio,
   type DisplayMode,
 } from "@/lib/portfolio";
@@ -93,20 +95,98 @@ function ModeToggle() {
   );
 }
 
+function ManageFunds({ funds }: { funds: FundData[] }) {
+  const { t } = useI18n();
+  const { hidden, moveFund, toggleHidden } = usePortfolio();
+
+  return (
+    <div>
+      <div className="mb-1.5 text-xs font-medium text-muted-foreground">
+        {t("manageFunds")}
+      </div>
+      <div className="divide-y rounded-md border">
+        {funds.map((f, i) => {
+          const isHidden = hidden.includes(f.symbol);
+          const lastVisible = !isHidden && hidden.length >= funds.length - 1;
+          return (
+            <div key={f.symbol} className="flex items-center gap-2 px-3 py-1.5">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-7 w-7 p-0"
+                disabled={i === 0}
+                aria-label={t("moveUp")}
+                onClick={() => moveFund(f.symbol, "up")}
+              >
+                <ChevronUp className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-7 w-7 p-0"
+                disabled={i === funds.length - 1}
+                aria-label={t("moveDown")}
+                onClick={() => moveFund(f.symbol, "down")}
+              >
+                <ChevronDown className="h-4 w-4" />
+              </Button>
+              <span
+                className={cn(
+                  "min-w-0 flex-1 truncate font-mono text-xs font-semibold",
+                  isHidden && "text-muted-foreground",
+                )}
+              >
+                {f.symbol}
+                {isHidden && (
+                  <span className="ml-1.5 text-[10px] font-normal">
+                    ({t("hiddenLabel")})
+                  </span>
+                )}
+              </span>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-7 w-7 p-0"
+                disabled={lastVisible}
+                aria-label={isHidden ? t("showFund") : t("hideFund")}
+                onClick={() => toggleHidden(f.symbol)}
+              >
+                {isHidden ? (
+                  <EyeOff className="h-4 w-4 text-muted-foreground" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function FundRow({ fund }: { fund: FundData }) {
   const { t, lang } = useI18n();
-  const { entries, setEntry, clearEntry } = usePortfolio();
+  const { entries, setEntry, clearEntry, hidden } = usePortfolio();
   const entry = entries[fund.symbol];
   const pos = computePosition(fund, entry);
   const up = pos ? pos.profit >= 0 : false;
   const displayName = lang === "th" ? fund.name : fund.nameEn;
 
   return (
-    <div className="rounded-md border p-3">
+    <div
+      className={cn(
+        "rounded-md border p-3",
+        hidden.includes(fund.symbol) && "opacity-60",
+      )}
+    >
       <div className="mb-2 flex items-center justify-between gap-2">
         <div className="min-w-0">
           <div className="font-mono text-sm font-semibold">{fund.symbol}</div>
-          <div className="truncate text-xs text-muted-foreground" title={displayName}>
+          <div
+            className="truncate text-xs text-muted-foreground"
+            title={displayName}
+          >
             {displayName}
           </div>
         </div>
@@ -176,6 +256,8 @@ export function PortfolioDialog({
   onOpenChange: (open: boolean) => void;
 }) {
   const { t } = useI18n();
+  const { order } = usePortfolio();
+  const ordered = orderFunds(funds, order);
   return (
     <Dialog
       open={open}
@@ -186,8 +268,9 @@ export function PortfolioDialog({
     >
       <div className="space-y-4">
         <ModeToggle />
+        <ManageFunds funds={ordered} />
         <div className="space-y-2">
-          {funds.map((f) => (
+          {ordered.map((f) => (
             <FundRow key={f.symbol} fund={f} />
           ))}
         </div>
