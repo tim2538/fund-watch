@@ -84,7 +84,7 @@ export function DonutBreakdown({
                 <Cell key={i} fill={d.fill} />
               ))}
             </Pie>
-            <Tooltip content={<DonutTooltip />} />
+            <Tooltip content={<DonutTooltip />} wrapperStyle={{ zIndex: 10 }} />
           </PieChart>
         </ResponsiveContainer>
         {center && (
