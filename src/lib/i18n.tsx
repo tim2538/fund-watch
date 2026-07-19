@@ -72,7 +72,7 @@ const en: Dict = {
   myPortfolio: "My Portfolio",
   portfolioDesc: "Enter your cost and units per fund to see your own return",
   displayMode: "Display mode",
-  modeMarket: "Market (today)",
+  modeMarket: "Market",
   modePortfolio: "My portfolio",
   costLabel: "Cost (THB)",
   unitsLabel: "Units",
@@ -151,7 +151,7 @@ const th: Dict = {
   portfolioDesc:
     "กรอกต้นทุนและจำนวนหน่วยของแต่ละกองทุนเพื่อดูผลตอบแทนของคุณเอง",
   displayMode: "โหมดแสดงผล",
-  modeMarket: "ตลาด (วันนี้)",
+  modeMarket: "ตลาด",
   modePortfolio: "พอร์ตของฉัน",
   costLabel: "ต้นทุน (บาท)",
   unitsLabel: "จำนวนหน่วย",

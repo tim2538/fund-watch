@@ -65,8 +65,15 @@ export function FundSummaryCard({
               {t("setupPortfolio")}
             </Badge>
           ) : (
-            <Badge variant={up ? "success" : "danger"} className="gap-1 shrink-0">
-              {up ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
+            <Badge
+              variant={up ? "success" : "danger"}
+              className="gap-1 shrink-0"
+            >
+              {up ? (
+                <ArrowUpRight className="h-3 w-3" />
+              ) : (
+                <ArrowDownRight className="h-3 w-3" />
+              )}
               {portfolioMode && pos
                 ? formatPercent(pos.returnPercent)
                 : formatPercent(fund.changePercent)}
@@ -78,8 +85,12 @@ export function FundSummaryCard({
         {fund.ok ? (
           <>
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold tabular-nums">{formatBaht(fund.nav)}</span>
-              <span className="text-xs text-muted-foreground">{t("perUnit")}</span>
+              <span className="text-2xl font-bold tabular-nums">
+                {formatBaht(fund.nav)}
+              </span>
+              <span className="text-xs text-muted-foreground">
+                {t("perUnit")}
+              </span>
             </div>
             {portfolioMode && pos ? (
               <>
@@ -108,7 +119,7 @@ export function FundSummaryCard({
                   )}
                 >
                   {up ? "+" : ""}
-                  {formatBaht(fund.change)} {t("today")}
+                  {formatBaht(fund.change)} {t("perUnit")}
                 </div>
                 <div className="mt-2 text-[11px] text-muted-foreground">
                   {t("asOf", { date: formatDate(fund.navDate, locale) })}
@@ -117,7 +128,9 @@ export function FundSummaryCard({
             )}
           </>
         ) : (
-          <p className="py-2 text-sm text-muted-foreground">{t("loadFailed")}</p>
+          <p className="py-2 text-sm text-muted-foreground">
+            {t("loadFailed")}
+          </p>
         )}
       </CardContent>
     </Card>

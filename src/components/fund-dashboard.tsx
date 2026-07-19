@@ -74,7 +74,7 @@ export function FundDashboard({ funds }: { funds: FundData[] }) {
               <TabsTrigger
                 key={f.symbol}
                 value={f.symbol}
-                className="shrink-0 min-w-[100px] flex-col gap-0.5 py-1.5"
+                className="shrink-0 flex-col gap-0.5 py-1.5"
               >
                 <span className="font-mono text-xs sm:text-sm">{f.symbol}</span>
                 {!f.ok ? null : portfolioMode && !pos ? (

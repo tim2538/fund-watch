@@ -15,7 +15,25 @@ import { cn, formatBaht } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { sliceHistory, type NavPoint, type TimeRange } from "@/lib/funds";
 
-const RANGES: TimeRange[] = ["1M", "3M", "6M", "YTD", "1Y"];
+const RANGES: TimeRange[] = [
+  "1M",
+  "3M",
+  "6M",
+  "YTD",
+  "1Y",
+  "3Y",
+  "5Y",
+  "10Y",
+  "MAX",
+];
+
+const RANGE_STORAGE_KEY = "fund-watch.nav-range";
+
+/**
+ * Remembered across fund switches so the chart keeps the user's last range.
+ * `null` = localStorage not read yet (first mount after page load).
+ */
+let lastRange: TimeRange | null = null;
 
 /** Parse YYYY-MM-DD as a local calendar date (timezone-safe). */
 function parseLocal(iso: string): Date {
@@ -37,7 +55,9 @@ function ChartTooltip({ active, payload, locale }: any) {
           year: "numeric",
         })}
       </div>
-      <div className="mt-0.5 font-semibold tabular-nums">{formatBaht(p.nav)}</div>
+      <div className="mt-0.5 font-semibold tabular-nums">
+        {formatBaht(p.nav)}
+      </div>
     </div>
   );
 }
@@ -50,8 +70,37 @@ export function NavChart({
   className?: string;
 }) {
   const { locale } = useI18n();
-  const [range, setRange] = React.useState<TimeRange>("6M");
-  const data = React.useMemo(() => sliceHistory(history, range), [history, range]);
+  const [range, setRange] = React.useState<TimeRange>(lastRange ?? "1Y");
+
+  // Restore the saved range once per page load (after hydration, to avoid
+  // a server/client HTML mismatch).
+  React.useEffect(() => {
+    if (lastRange !== null) return;
+    let saved: string | null = null;
+    try {
+      saved = window.localStorage.getItem(RANGE_STORAGE_KEY);
+    } catch {
+      /* localStorage unavailable (private mode etc.) */
+    }
+    lastRange = RANGES.includes(saved as TimeRange)
+      ? (saved as TimeRange)
+      : "1Y";
+    setRange(lastRange);
+  }, []);
+
+  const selectRange = (r: TimeRange) => {
+    lastRange = r;
+    setRange(r);
+    try {
+      window.localStorage.setItem(RANGE_STORAGE_KEY, r);
+    } catch {
+      /* ignore */
+    }
+  };
+  const data = React.useMemo(
+    () => sliceHistory(history, range),
+    [history, range],
+  );
 
   const up = data.length > 1 && data[data.length - 1].nav >= data[0].nav;
   const stroke = up ? "hsl(var(--chart-up))" : "hsl(var(--chart-down))";
@@ -70,7 +119,7 @@ export function NavChart({
             size="sm"
             variant={range === r ? "default" : "outline"}
             className="h-7 px-3 text-xs"
-            onClick={() => setRange(r)}
+            onClick={() => selectRange(r)}
           >
             {r}
           </Button>
@@ -79,14 +128,21 @@ export function NavChart({
 
       <div className="h-[280px] w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+          <AreaChart
+            data={data}
+            margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+          >
             <defs>
               <linearGradient id="navFill" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor={stroke} stopOpacity={0.28} />
                 <stop offset="100%" stopColor={stroke} stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="hsl(var(--border))"
+              vertical={false}
+            />
             <XAxis
               dataKey="date"
               tickLine={false}
@@ -94,7 +150,12 @@ export function NavChart({
               minTickGap={40}
               tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
               tickFormatter={(v) =>
-                parseLocal(v).toLocaleDateString(locale, { day: "numeric", month: "short" })
+                parseLocal(v).toLocaleDateString(
+                  locale,
+                  ["3Y", "5Y", "10Y", "MAX"].includes(range)
+                    ? { month: "short", year: "numeric" }
+                    : { day: "numeric", month: "short" },
+                )
               }
             />
             <YAxis

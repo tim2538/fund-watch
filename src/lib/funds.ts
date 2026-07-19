@@ -8,7 +8,7 @@
 
 export type FundSymbol = "BKD" | "BSIRICG" | "B-CHINE-EQ" | "BFIXED" | "SCBSET50";
 
-export type TimeRange = "1M" | "3M" | "6M" | "YTD" | "1Y";
+export type TimeRange = "1M" | "3M" | "6M" | "YTD" | "1Y" | "3Y" | "5Y" | "10Y" | "MAX";
 
 export interface NavPoint {
   date: string; // ISO yyyy-mm-dd
@@ -90,10 +90,24 @@ export function sliceHistory(history: NavPoint[], range: TimeRange): NavPoint[] 
       start = new Date(end.getFullYear(), 0, 1);
       break;
     case "1Y":
-    default:
       start = new Date(end);
       start.setFullYear(end.getFullYear() - 1);
       break;
+    case "3Y":
+      start = new Date(end);
+      start.setFullYear(end.getFullYear() - 3);
+      break;
+    case "5Y":
+      start = new Date(end);
+      start.setFullYear(end.getFullYear() - 5);
+      break;
+    case "10Y":
+      start = new Date(end);
+      start.setFullYear(end.getFullYear() - 10);
+      break;
+    case "MAX":
+    default:
+      return history;
   }
   return history.filter((p) => new Date(p.date) >= start);
 }

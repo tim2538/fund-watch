@@ -22,7 +22,7 @@ import {
 
 const API = "https://www.finnomena.com/fn3/api/fund/v2/public/funds";
 const FETCH_TIMEOUT_MS = 8000;
-const HISTORY_RANGE = "1Y"; // full window fetched once; UI slices client-side
+const HISTORY_RANGE = "MAX"; // full window fetched once; UI slices client-side
 
 async function fetchJson<T = any>(url: string): Promise<T | null> {
   const controller = new AbortController();

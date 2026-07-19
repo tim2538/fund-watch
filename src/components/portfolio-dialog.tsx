@@ -152,9 +152,9 @@ function ManageFunds({ funds }: { funds: FundData[] }) {
                 onClick={() => toggleHidden(f.symbol)}
               >
                 {isHidden ? (
-                  <EyeOff className="h-4 w-4 text-muted-foreground" />
+                  <Eye className="h-4 w-4 text-muted-foreground" />
                 ) : (
-                  <Eye className="h-4 w-4" />
+                  <EyeOff className="h-4 w-4" />
                 )}
               </Button>
             </div>
