@@ -26,6 +26,13 @@ export type DisplayMode = "market" | "portfolio";
 
 export type PortfolioEntries = Partial<Record<FundSymbol, PortfolioEntry>>;
 
+/** The subset of user data that can be exported / imported via QR code. */
+export interface ManagedData {
+  portfolio: PortfolioEntries;
+  fundOrder: FundSymbol[];
+  fundHidden: FundSymbol[];
+}
+
 export interface Position {
   cost: number; // total invested (baht)
   units: number;
@@ -93,6 +100,10 @@ interface PortfolioValue {
   hidden: FundSymbol[];
   moveFund: (symbol: FundSymbol, direction: "up" | "down") => void;
   toggleHidden: (symbol: FundSymbol) => void;
+  /** Current portfolio / order / hidden data, for export. */
+  exportData: () => ManagedData;
+  /** Validate and apply imported data; returns false if the payload is invalid. */
+  importData: (raw: unknown) => boolean;
 }
 
 const PortfolioContext = React.createContext<PortfolioValue | null>(null);
@@ -147,6 +158,44 @@ function readHidden(): FundSymbol[] {
     /* ignore malformed data */
   }
   return [];
+}
+
+/**
+ * Keep only valid { cost, units } pairs keyed by a known fund symbol. Used when
+ * importing untrusted data (e.g. from a scanned QR code).
+ */
+function sanitizeEntries(raw: unknown): PortfolioEntries {
+  const out: PortfolioEntries = {};
+  if (!raw || typeof raw !== "object") return out;
+  for (const [key, val] of Object.entries(raw as Record<string, unknown>)) {
+    if (!isFundSymbol(key) || !val || typeof val !== "object") continue;
+    const { cost, units } = val as Record<string, unknown>;
+    if (
+      typeof cost === "number" &&
+      Number.isFinite(cost) &&
+      cost >= 0 &&
+      typeof units === "number" &&
+      Number.isFinite(units) &&
+      units >= 0
+    ) {
+      out[key] = { cost, units };
+    }
+  }
+  return out;
+}
+
+/**
+ * Clamp a hidden list so it never hides every fund (mirrors the toggleHidden
+ * invariant) and contains only known, de-duplicated symbols.
+ */
+function sanitizeHidden(raw: unknown): FundSymbol[] {
+  const out: FundSymbol[] = [];
+  if (Array.isArray(raw)) {
+    for (const v of raw) {
+      if (isFundSymbol(v) && !out.includes(v)) out.push(v);
+    }
+  }
+  return out.slice(0, Math.max(0, FUND_SYMBOLS.length - 1));
 }
 
 function readEntries(): PortfolioEntries {
@@ -269,6 +318,39 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
     [],
   );
 
+  const exportData = React.useCallback<PortfolioValue["exportData"]>(
+    () => ({ portfolio: entries, fundOrder: order, fundHidden: hidden }),
+    [entries, order, hidden],
+  );
+
+  const importData = React.useCallback<PortfolioValue["importData"]>((raw) => {
+    if (!raw || typeof raw !== "object") return false;
+    // Accept either the raw managed object or a wrapper with a `data` field.
+    const src = raw as Record<string, unknown>;
+    const d = (
+      src.data && typeof src.data === "object" ? src.data : src
+    ) as Record<string, unknown>;
+    if (!("portfolio" in d) && !("fundOrder" in d) && !("fundHidden" in d)) {
+      return false;
+    }
+
+    const nextEntries = sanitizeEntries(d.portfolio);
+    const nextOrder = reconcileOrder(d.fundOrder);
+    const nextHidden = sanitizeHidden(d.fundHidden);
+
+    setEntries(nextEntries);
+    setOrder(nextOrder);
+    setHidden(nextHidden);
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(nextEntries));
+      window.localStorage.setItem(ORDER_KEY, JSON.stringify(nextOrder));
+      window.localStorage.setItem(HIDDEN_KEY, JSON.stringify(nextHidden));
+    } catch {
+      /* ignore */
+    }
+    return true;
+  }, []);
+
   const value = React.useMemo<PortfolioValue>(
     () => ({
       entries,
@@ -280,6 +362,8 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
       hidden,
       moveFund,
       toggleHidden,
+      exportData,
+      importData,
     }),
     [
       entries,
@@ -291,6 +375,8 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
       hidden,
       moveFund,
       toggleHidden,
+      exportData,
+      importData,
     ],
   );
 
