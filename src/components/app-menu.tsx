@@ -1,16 +1,14 @@
 "use client";
 
 import * as React from "react";
-import { Menu } from "lucide-react";
+import { Menu, Monitor, Moon, Sun, TrendingUp, Wallet } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
+import { FlagEN, FlagTH } from "@/components/ui/flag-icons";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useI18n, type Lang } from "@/lib/i18n";
@@ -33,45 +31,37 @@ export function AppMenu() {
           <Menu className="h-[1.2rem] w-[1.2rem]" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-52">
-        <DropdownMenuLabel>{t("preference")}</DropdownMenuLabel>
-        <DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
-          <DropdownMenuRadioItem value="light">
-            {t("themeLight")}
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="dark">
-            {t("themeDark")}
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="system">
-            {t("themeSystem")}
-          </DropdownMenuRadioItem>
-        </DropdownMenuRadioGroup>
+      <DropdownMenuContent align="end" className="w-72 space-y-3 p-3">
+        <ButtonGroup
+          label={t("appearance")}
+          value={theme ?? "system"}
+          onValueChange={setTheme}
+          options={[
+            { value: "light", label: t("themeLight"), icon: Sun },
+            { value: "dark", label: t("themeDark"), icon: Moon },
+            { value: "system", label: t("themeSystem"), icon: Monitor },
+          ]}
+        />
 
-        <DropdownMenuSeparator />
-
-        <DropdownMenuLabel>{t("language")}</DropdownMenuLabel>
-        <DropdownMenuRadioGroup
+        <ButtonGroup<Lang>
+          label={t("language")}
           value={lang}
-          onValueChange={(v) => setLang(v as Lang)}
-        >
-          <DropdownMenuRadioItem value="en">EN</DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="th">TH</DropdownMenuRadioItem>
-        </DropdownMenuRadioGroup>
+          onValueChange={setLang}
+          options={[
+            { value: "en", label: "EN", icon: FlagEN },
+            { value: "th", label: "ไทย", icon: FlagTH },
+          ]}
+        />
 
-        <DropdownMenuSeparator />
-
-        <DropdownMenuLabel>{t("displayMode")}</DropdownMenuLabel>
-        <DropdownMenuRadioGroup
+        <ButtonGroup<DisplayMode>
+          label={t("viewMode")}
           value={displayMode}
-          onValueChange={(v) => setDisplayMode(v as DisplayMode)}
-        >
-          <DropdownMenuRadioItem value="market">
-            {t("modeMarket")}
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="portfolio">
-            {t("modePortfolio")}
-          </DropdownMenuRadioItem>
-        </DropdownMenuRadioGroup>
+          onValueChange={setDisplayMode}
+          options={[
+            { value: "market", label: t("modeMarket"), icon: TrendingUp },
+            { value: "portfolio", label: t("modePortfolio"), icon: Wallet },
+          ]}
+        />
       </DropdownMenuContent>
     </DropdownMenu>
   );

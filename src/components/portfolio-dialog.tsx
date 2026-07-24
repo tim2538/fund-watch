@@ -1,7 +1,15 @@
 "use client";
 
 import * as React from "react";
-import { ChevronDown, ChevronUp, Eye, EyeOff } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  Eye,
+  EyeOff,
+  TrendingUp,
+  Wallet,
+  type LucideIcon,
+} from "lucide-react";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -65,31 +73,35 @@ function ThousandsInput({
 function ModeToggle() {
   const { t } = useI18n();
   const { displayMode, setDisplayMode } = usePortfolio();
-  const options: { value: DisplayMode; label: string }[] = [
-    { value: "market", label: t("modeMarket") },
-    { value: "portfolio", label: t("modePortfolio") },
+  const options: { value: DisplayMode; label: string; icon: LucideIcon }[] = [
+    { value: "market", label: t("modeMarket"), icon: TrendingUp },
+    { value: "portfolio", label: t("modePortfolio"), icon: Wallet },
   ];
   return (
     <div>
       <div className="mb-1.5 text-xs font-medium text-muted-foreground">
-        {t("displayMode")}
+        {t("viewMode")}
       </div>
       <div className="inline-flex rounded-md border p-0.5">
-        {options.map((o) => (
-          <button
-            key={o.value}
-            type="button"
-            onClick={() => setDisplayMode(o.value)}
-            className={cn(
-              "rounded px-3 py-1 text-xs font-medium transition-colors",
-              displayMode === o.value
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:text-foreground",
-            )}
-          >
-            {o.label}
-          </button>
-        ))}
+        {options.map((o) => {
+          const Icon = o.icon;
+          return (
+            <button
+              key={o.value}
+              type="button"
+              onClick={() => setDisplayMode(o.value)}
+              className={cn(
+                "flex items-center justify-center gap-1.5 whitespace-nowrap rounded px-3 py-1 text-xs font-medium transition-colors",
+                displayMode === o.value
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              <Icon className="h-3.5 w-3.5" />
+              {o.label}
+            </button>
+          );
+        })}
       </div>
     </div>
   );
