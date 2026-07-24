@@ -18,6 +18,8 @@ const en: Dict = {
   iosInstallHint:
     'To install: tap the Share button, then choose "Add to Home Screen".',
   menu: "Menu",
+  settings: "Settings",
+  settingsDesc: "Customize appearance, language, and view mode",
   preference: "Preference",
   appearance: "Appearance",
   themeLight: "Light",
@@ -71,7 +73,7 @@ const en: Dict = {
   showLess: "Show less",
 
   // Portfolio / display mode
-  myPortfolio: "My Portfolio",
+  myPortfolio: "My portfolio",
   portfolioDesc: "Enter your cost and units per fund to see your own return",
   displayMode: "Display mode",
   modeMarket: "Market",
@@ -98,6 +100,8 @@ const th: Dict = {
   installApp: "ติดตั้งแอป",
   iosInstallHint: 'วิธีติดตั้ง: แตะปุ่มแชร์ แล้วเลือก "เพิ่มไปยังหน้าจอโฮม"',
   menu: "เมนู",
+  settings: "ตั้งค่า",
+  settingsDesc: "ปรับแต่งธีม ภาษา และมุมมอง",
   preference: "การตั้งค่า",
   appearance: "ธีม",
   themeLight: "สว่าง",

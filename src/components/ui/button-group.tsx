@@ -22,11 +22,11 @@ export function ButtonGroup<T extends string>({
   options: ButtonGroupOption<T>[];
 }) {
   return (
-    <div>
-      <div className="mb-1.5 text-xs font-medium text-muted-foreground">
+    <div className="sm:flex sm:items-center sm:justify-between sm:gap-4">
+      <div className="mb-1.5 text-xs font-medium text-muted-foreground sm:mb-0 sm:shrink-0">
         {label}
       </div>
-      <div className="flex rounded-md border p-0.5">
+      <div className="flex rounded-md border p-0.5 sm:w-64">
         {options.map((o) => {
           const Icon = o.icon;
           return (
