@@ -113,6 +113,20 @@ const en: Dict = {
   hideFund: "Hide fund",
   showFund: "Show fund",
   hiddenLabel: "Hidden",
+
+  // Transactions
+  addTransaction: "Add transaction",
+  addTransactionDesc: "Record a buy or sell trade for one of your funds",
+  txFund: "Fund",
+  txType: "Type",
+  txBuy: "Buy",
+  txSell: "Sell",
+  txDate: "Date",
+  txAmount: "Amount (THB)",
+  txUnits: "Units",
+  txUpdatePortfolio: "Update portfolio",
+  txUpdatePortfolioHint: "Buy adds to cost and units, sell subtracts",
+  txAdd: "Add transaction",
 };
 
 const th: Dict = {
@@ -213,6 +227,20 @@ const th: Dict = {
   hideFund: "ซ่อนกองทุน",
   showFund: "แสดงกองทุน",
   hiddenLabel: "ซ่อนอยู่",
+
+  // Transactions
+  addTransaction: "เพิ่มรายการซื้อขาย",
+  addTransactionDesc: "บันทึกการซื้อหรือขายกองทุนของคุณ",
+  txFund: "กองทุน",
+  txType: "ประเภท",
+  txBuy: "ซื้อ",
+  txSell: "ขาย",
+  txDate: "วันที่",
+  txAmount: "จำนวนเงิน (บาท)",
+  txUnits: "จำนวนหน่วย",
+  txUpdatePortfolio: "อัปเดตพอร์ต",
+  txUpdatePortfolioHint: "ซื้อเพิ่มต้นทุนและจำนวนหน่วย ขายหักออก",
+  txAdd: "เพิ่มรายการ",
 };
 
 const DICTS: Record<Lang, Dict> = { en, th };

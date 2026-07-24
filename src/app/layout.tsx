@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
 import { I18nProvider } from "@/lib/i18n";
 import { PortfolioProvider } from "@/lib/portfolio";
+import { TransactionsProvider } from "@/lib/transactions";
 
 const sarabun = Sarabun({
   subsets: ["thai"],
@@ -68,7 +69,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <I18nProvider>
-            <PortfolioProvider>{children}</PortfolioProvider>
+            <PortfolioProvider>
+              <TransactionsProvider>{children}</TransactionsProvider>
+            </PortfolioProvider>
           </I18nProvider>
         </ThemeProvider>
       </body>

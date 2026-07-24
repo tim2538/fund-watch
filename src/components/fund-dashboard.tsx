@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { FundSummaryCard } from "@/components/fund-summary-card";
 import { FundDetail } from "@/components/fund-detail";
 import { PortfolioDialog } from "@/components/portfolio-dialog";
+import { TransactionFab } from "@/components/transaction-fab";
 import { useI18n } from "@/lib/i18n";
 import { cn, formatPercent } from "@/lib/utils";
 import { computePosition, usePortfolio, visibleFunds } from "@/lib/portfolio";
@@ -114,6 +115,8 @@ export function FundDashboard({ funds }: { funds: FundData[] }) {
         open={portfolioOpen}
         onOpenChange={setPortfolioOpen}
       />
+
+      <TransactionFab funds={displayFunds} selectedSymbol={effectiveSelected} />
     </div>
   );
 }

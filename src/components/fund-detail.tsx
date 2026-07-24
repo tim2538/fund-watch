@@ -27,6 +27,7 @@ import {
 } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { computePosition, usePortfolio } from "@/lib/portfolio";
+import { useTransactions } from "@/lib/transactions";
 import { FINNOMENA_URL, type FundData, type FundSymbol } from "@/lib/funds";
 
 function FinnomenaLink({ symbol }: { symbol: FundSymbol }) {
@@ -67,6 +68,7 @@ export function FundDetail({ fund }: { fund: FundData }) {
   }
 
   const { displayMode, entries } = usePortfolio();
+  const { forSymbol } = useTransactions();
   const pos = computePosition(fund, entries[fund.symbol]);
   const portfolioMode = displayMode === "portfolio";
   const showPortfolio = portfolioMode && pos != null;
@@ -168,7 +170,10 @@ export function FundDetail({ fund }: { fund: FundData }) {
           <CardDescription>{t("navHistoryDesc")}</CardDescription>
         </CardHeader>
         <CardContent className="pt-4">
-          <NavChart history={fund.history} />
+          <NavChart
+            history={fund.history}
+            transactions={portfolioMode ? forSymbol(fund.symbol) : []}
+          />
         </CardContent>
       </Card>
 

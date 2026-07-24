@@ -5,6 +5,7 @@ import {
   Area,
   AreaChart,
   CartesianGrid,
+  ReferenceDot,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -14,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { cn, formatBaht } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { sliceHistory, type NavPoint, type TimeRange } from "@/lib/funds";
+import type { Transaction } from "@/lib/transactions";
 
 const RANGES: TimeRange[] = [
   "1M",
@@ -62,11 +64,48 @@ function ChartTooltip({ active, payload, locale }: any) {
   );
 }
 
+/** A transaction snapped onto a NAV history point, for chart plotting. */
+interface Marker {
+  id: string;
+  date: string; // matched history date (x on the category axis)
+  nav: number; // NAV at that date (y)
+  type: Transaction["type"];
+}
+
+/**
+ * Snap each transaction to the nearest NAV point within the visible range so it
+ * can be plotted as a ReferenceDot. Trades outside the range are dropped.
+ */
+function buildMarkers(data: NavPoint[], txs: Transaction[]): Marker[] {
+  if (!data.length || !txs.length) return [];
+  const first = data[0].date;
+  const last = data[data.length - 1].date;
+  const out: Marker[] = [];
+  for (const tx of txs) {
+    if (tx.date < first || tx.date > last) continue;
+    let best = data[0];
+    let bestDiff = Infinity;
+    for (const p of data) {
+      const diff = Math.abs(
+        parseLocal(p.date).getTime() - parseLocal(tx.date).getTime(),
+      );
+      if (diff < bestDiff) {
+        bestDiff = diff;
+        best = p;
+      }
+    }
+    out.push({ id: tx.id, date: best.date, nav: best.nav, type: tx.type });
+  }
+  return out;
+}
+
 export function NavChart({
   history,
+  transactions = [],
   className,
 }: {
   history: NavPoint[];
+  transactions?: Transaction[];
   className?: string;
 }) {
   const { locale } = useI18n();
@@ -100,6 +139,11 @@ export function NavChart({
   const data = React.useMemo(
     () => sliceHistory(history, range),
     [history, range],
+  );
+
+  const markers = React.useMemo(
+    () => buildMarkers(data, transactions),
+    [data, transactions],
   );
 
   const up = data.length > 1 && data[data.length - 1].nav >= data[0].nav;
@@ -176,6 +220,24 @@ export function NavChart({
               dot={false}
               activeDot={{ r: 4 }}
             />
+            {markers.map((m) => {
+              const color =
+                m.type === "buy"
+                  ? "hsl(var(--chart-up))"
+                  : "hsl(var(--chart-down))";
+              return (
+                <ReferenceDot
+                  key={m.id}
+                  x={m.date}
+                  y={m.nav}
+                  r={5}
+                  fill={color}
+                  stroke="hsl(var(--background))"
+                  strokeWidth={2}
+                  isFront
+                />
+              );
+            })}
           </AreaChart>
         </ResponsiveContainer>
       </div>
