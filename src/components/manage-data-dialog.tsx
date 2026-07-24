@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, fileStamp } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { usePortfolio } from "@/lib/portfolio";
 import { FUND_SYMBOLS } from "@/lib/funds";
@@ -262,8 +262,12 @@ export function ManageDataDialog({
           ))}
         </div>
 
-        {tab === "export" ? (
-          <div className="flex min-h-[320px] flex-col gap-3">
+        <div className="flex h-[340px] flex-col gap-3">
+          {statusBanner}
+
+          <div className="min-h-0 flex-1">
+            {tab === "export" ? (
+          <div className="flex h-full flex-col gap-3">
             <div className="flex flex-1 flex-col items-center justify-center gap-3">
               {hasData && qrUrl ? (
                 <>
@@ -289,35 +293,40 @@ export function ManageDataDialog({
             </div>
 
             {hasData && qrUrl && (
-              <a
-                href={qrUrl}
-                download="fund-watch-backup.png"
-                className="mt-auto w-full"
+              <Button
+                variant="outline"
+                className="mt-auto w-full gap-1.5"
+                onClick={() => {
+                  const a = document.createElement("a");
+                  a.href = qrUrl;
+                  a.download = `fund-watch-${fileStamp(new Date())}.png`;
+                  a.click();
+                }}
               >
-                <Button variant="outline" className="w-full gap-1.5">
-                  <Download className="h-4 w-4" />
-                  {t("saveQr")}
-                </Button>
-              </a>
+                <Download className="h-4 w-4" />
+                {t("saveQr")}
+              </Button>
             )}
           </div>
         ) : (
-          <div className="flex min-h-[320px] flex-col gap-3">
-            <div className="flex flex-col items-center gap-1.5 rounded-md bg-muted px-3 py-3 text-center text-xs text-muted-foreground">
-              <AlertTriangle className="h-5 w-5" />
+          <div className="flex h-full flex-col gap-3">
+            <div className="flex items-center gap-2 rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground">
+              <AlertTriangle className="h-5 w-5 shrink-0" />
               {t("importReplaceWarning")}
             </div>
 
-            {statusBanner}
-
             {scanning ? (
-              <div className="mt-auto space-y-2">
-                <video
-                  ref={videoRef}
-                  className="aspect-square w-full rounded-md border bg-black object-cover"
-                  muted
-                  playsInline
-                />
+              <div className="flex min-h-0 flex-1 flex-col gap-2">
+                <div className="flex min-h-0 flex-1 items-center justify-center">
+                  <div className="relative aspect-square h-full overflow-hidden rounded-md border bg-black">
+                    <video
+                      ref={videoRef}
+                      className="absolute inset-0 h-full w-full object-cover"
+                      muted
+                      playsInline
+                    />
+                  </div>
+                </div>
                 <p className="text-center text-xs text-muted-foreground">
                   {t("importScanHint")}
                 </p>
@@ -330,7 +339,7 @@ export function ManageDataDialog({
                 </Button>
               </div>
             ) : (
-              <div className="mt-auto grid grid-cols-2 gap-2">
+              <div className="mt-auto grid grid-cols-1 gap-2 sm:grid-cols-2">
                 <Button
                   variant="outline"
                   className="gap-1.5"
@@ -365,7 +374,9 @@ export function ManageDataDialog({
               }}
             />
           </div>
-        )}
+            )}
+          </div>
+        </div>
       </div>
     </Dialog>
   );

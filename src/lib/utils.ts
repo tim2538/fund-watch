@@ -22,6 +22,15 @@ export function formatSignedBaht(value: number, digits = 2): string {
   return `${value >= 0 ? "+" : ""}${formatBaht(value, digits)}`;
 }
 
+/** Local-time timestamp for filenames, e.g. 202607251655 (YYYYMMDDHHmm). */
+export function fileStamp(d: Date = new Date()): string {
+  const p = (n: number) => String(n).padStart(2, "0");
+  return (
+    `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}` +
+    `${p(d.getHours())}${p(d.getMinutes())}`
+  );
+}
+
 /**
  * Format an ISO date for the given Intl locale.
  * Parses YYYY-MM-DD as a *local* calendar date so the output is identical on

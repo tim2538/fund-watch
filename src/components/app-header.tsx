@@ -36,8 +36,8 @@ export function AppHeader({ updatedAt }: { updatedAt: string }) {
         <div>
           <h1 className="text-lg font-bold leading-tight">Fund Watch</h1>
           <p className="text-xs text-muted-foreground">
+            {time ? `${t("updated", { time })} · ` : ""}
             {t("liveData")}
-            {time ? ` · ${t("updated", { time })}` : ""}
           </p>
         </div>
       </div>

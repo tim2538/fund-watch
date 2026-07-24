@@ -35,7 +35,8 @@ const en: Dict = {
   importScanHint: "Point your camera at the QR code.",
   importSuccess: "Data imported successfully.",
   importError: "Couldn't read a valid Fund Watch QR code.",
-  importCameraError: "Couldn't access the camera. Try uploading an image instead.",
+  importCameraError:
+    "Couldn't access the camera. Try uploading an image instead.",
   importReplaceWarning:
     "Importing replaces your current portfolio, fund order, and hidden funds.",
   preference: "Preference",
