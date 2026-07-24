@@ -38,6 +38,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { th as thLocale } from "date-fns/locale";
+import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { usePortfolio } from "@/lib/portfolio";
 import { useTransactions, type TransactionType } from "@/lib/transactions";
@@ -272,7 +273,17 @@ function SheetForm({
         </span>
       </Label>
 
-      <Button type="submit" disabled={!valid} className="h-10 w-full">
+      <Button
+        type="submit"
+        disabled={!valid}
+        className={cn(
+          "h-10 w-full text-white",
+          type === "buy"
+            ? "bg-emerald-600 hover:bg-emerald-700"
+            : "bg-red-600 hover:bg-red-700",
+        )}
+      >
+        {type === "buy" ? <ShoppingCart /> : <HandCoins />}
         {t("txAdd")}
       </Button>
     </form>
@@ -291,15 +302,67 @@ export function AddTransactionSheet({
   defaultSymbol: FundSymbol;
 }) {
   const { t } = useI18n();
+  const contentRef = React.useRef<HTMLDivElement>(null);
+  const drag = React.useRef({ active: false, startY: 0, dy: 0 });
+
+  // Drag-to-dismiss on the grab handle: follow the finger downward, then either
+  // snap back (short drag) or slide the sheet off-screen and close it.
+  const CLOSE_THRESHOLD = 100; // px dragged before a release closes the sheet
+
+  const handlePointerDown = (e: React.PointerEvent) => {
+    const el = contentRef.current;
+    if (!el) return;
+    drag.current = { active: true, startY: e.clientY, dy: 0 };
+    el.style.transition = "none";
+    el.style.animation = "none"; // let our transform drive the motion, not Radix
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    const el = contentRef.current;
+    if (!drag.current.active || !el) return;
+    const dy = Math.max(0, e.clientY - drag.current.startY);
+    drag.current.dy = dy;
+    el.style.transform = `translateY(${dy}px)`;
+  };
+
+  const handlePointerUp = () => {
+    const el = contentRef.current;
+    if (!drag.current.active || !el) return;
+    const { dy } = drag.current;
+    drag.current.active = false;
+    el.style.transition = "transform 220ms ease-out";
+
+    if (dy > CLOSE_THRESHOLD) {
+      el.style.transform = "translateY(100%)";
+      window.setTimeout(() => onOpenChange(false), 200);
+    } else {
+      el.style.transform = "translateY(0px)";
+      // Restore Radix's control once the snap-back finishes.
+      window.setTimeout(() => {
+        if (!contentRef.current) return;
+        contentRef.current.style.transition = "";
+        contentRef.current.style.transform = "";
+        contentRef.current.style.animation = "";
+      }, 240);
+    }
+  };
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
+        ref={contentRef}
         side="bottom"
         className="mx-auto flex max-h-[90vh] max-w-lg flex-col gap-0 rounded-t-2xl p-0"
       >
-        {/* Grab handle */}
-        <div className="flex justify-center pt-2.5">
+        {/* Grab handle — drag down to dismiss */}
+        <div
+          className="flex touch-none cursor-grab justify-center pb-1 pt-2.5 active:cursor-grabbing"
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerUp}
+        >
           <span className="h-1.5 w-10 rounded-full bg-muted-foreground/30" />
         </div>
 
