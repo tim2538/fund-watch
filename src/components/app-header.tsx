@@ -4,11 +4,21 @@ import * as React from "react";
 import { AppMenu } from "@/components/app-menu";
 import { InstallPrompt } from "@/components/install-prompt";
 import { useI18n } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
 
 export function AppHeader({ updatedAt }: { updatedAt: string }) {
   const { t, locale } = useI18n();
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => setMounted(true), []);
+
+  // Show the bottom border only once the page has scrolled away from the top.
+  const [scrolled, setScrolled] = React.useState(false);
+  React.useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 0);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   // Format the timestamp only after mount so server/client markup match
   // (timezone + locale are client-specific).
@@ -20,8 +30,13 @@ export function AppHeader({ updatedAt }: { updatedAt: string }) {
     : "";
 
   return (
-    <header className="mb-6 flex justify-between gap-3">
-      <div className="flex gap-2.5">
+    <header
+      className={cn(
+        "sticky top-0 z-30 -mx-4 mb-3 flex justify-between gap-3 border-b bg-background/80 px-4 py-3 backdrop-blur transition-colors sm:-mx-6 sm:px-6",
+        scrolled ? "border-border" : "border-transparent",
+      )}
+    >
+      <div className="flex min-w-0 gap-2.5">
         {/* App icon (light) — served from public/icons; basePath-aware for
             GitHub Pages project sub-paths. The SVG carries its own rounded
             background, so no wrapper styling is needed. */}
@@ -33,9 +48,9 @@ export function AppHeader({ updatedAt }: { updatedAt: string }) {
           height={36}
           className="h-9 w-9"
         />
-        <div>
+        <div className="min-w-0">
           <h1 className="text-lg font-bold leading-tight">Fund Watch</h1>
-          <p className="text-xs text-muted-foreground">
+          <p className="truncate text-xs text-muted-foreground">
             {time ? `${t("updated", { time })} · ` : ""}
             {t("liveData")}
           </p>

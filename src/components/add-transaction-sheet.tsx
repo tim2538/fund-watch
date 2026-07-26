@@ -10,9 +10,10 @@
  * folds the trade into the aggregate portfolio position: a buy adds cost +
  * units, a sell subtracts them (clamped at zero).
  *
- * The form lives in an inner <SheetForm> that only mounts while the sheet is
- * open (Radix unmounts closed Dialog content), so its state — including the
- * initial fund — is initialised fresh from `defaultSymbol` on every open.
+ * The form lives in an inner <SheetForm>. Radix unmounts closed Dialog content,
+ * so it re-mounts on every open and its state — including the initial fund — is
+ * initialised fresh from `defaultSymbol` each time. It is rendered unconditionally
+ * (not gated on `open`) so it stays mounted through the slide-out animation.
  */
 
 import * as React from "react";
@@ -314,7 +315,6 @@ export function AddTransactionSheet({
     if (!el) return;
     drag.current = { active: true, startY: e.clientY, dy: 0 };
     el.style.transition = "none";
-    el.style.animation = "none"; // let our transform drive the motion, not Radix
     e.currentTarget.setPointerCapture(e.pointerId);
   };
 
@@ -334,16 +334,22 @@ export function AddTransactionSheet({
     el.style.transition = "transform 220ms ease-out";
 
     if (dy > CLOSE_THRESHOLD) {
+      // Drive the close ourselves and suppress Radix's exit animation so it
+      // doesn't fight our transform. The node unmounts on close, so this inline
+      // style never leaks into the next open.
+      el.style.animation = "none";
       el.style.transform = "translateY(100%)";
       window.setTimeout(() => onOpenChange(false), 200);
     } else {
       el.style.transform = "translateY(0px)";
-      // Restore Radix's control once the snap-back finishes.
+      // Snap back, then clear our inline overrides so Radix regains control.
+      // Note: we must NOT touch `animation` here — the sheet is still
+      // data-state=open, so re-applying the class animation would replay the
+      // slide-in-from-bottom enter and make the sheet look freshly opened.
       window.setTimeout(() => {
         if (!contentRef.current) return;
         contentRef.current.style.transition = "";
         contentRef.current.style.transform = "";
-        contentRef.current.style.animation = "";
       }, 240);
     }
   };
@@ -371,13 +377,15 @@ export function AddTransactionSheet({
           <SheetDescription>{t("addTransactionDesc")}</SheetDescription>
         </SheetHeader>
 
-        {open && (
-          <SheetForm
-            funds={funds}
-            defaultSymbol={defaultSymbol}
-            onClose={() => onOpenChange(false)}
-          />
-        )}
+        {/* Rendered unconditionally so the form stays mounted through the
+            slide-out animation (gating on `open` would collapse the sheet to the
+            handle before it finishes sliding down). Radix unmounts the Content
+            on close, so state still re-initialises fresh on every open. */}
+        <SheetForm
+          funds={funds}
+          defaultSymbol={defaultSymbol}
+          onClose={() => onOpenChange(false)}
+        />
       </SheetContent>
     </Sheet>
   );

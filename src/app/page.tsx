@@ -12,7 +12,7 @@ export default async function Home() {
   const updatedAt = new Date().toISOString();
 
   return (
-    <div className="mx-auto max-w-5xl px-4 pb-16 pt-6 sm:px-6">
+    <div className="mx-auto max-w-5xl px-4 pb-16 pt-3 sm:px-6">
       <AppHeader updatedAt={updatedAt} />
       <FundDashboard funds={funds} />
       <AppFooter />

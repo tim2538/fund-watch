@@ -65,7 +65,7 @@ export function FundDashboard({ funds }: { funds: FundData[] }) {
         onValueChange={(v) => setSelected(v as FundSymbol)}
         className="w-full"
       >
-        <TabsList className="sticky top-3 z-10 flex h-auto w-full justify-start overflow-x-auto bg-muted p-2">
+        <TabsList className="sticky top-[70px] z-10 flex h-auto w-full justify-start overflow-x-auto bg-muted p-2">
           {displayFunds.map((f) => {
             const pos = computePosition(f, entries[f.symbol]);
             const percent =

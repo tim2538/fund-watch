@@ -84,7 +84,6 @@ export function FundDetail({ fund }: { fund: FundData }) {
                   {fund.symbol}
                 </CardTitle>
                 <Badge variant="outline">{t("risk", { n: fund.risk })}</Badge>
-                <Badge variant="success">{t("live")}</Badge>
               </div>
               <CardDescription className="mt-1">
                 {lang === "th" ? fund.name : fund.nameEn}
