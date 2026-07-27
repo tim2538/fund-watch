@@ -45,9 +45,10 @@ function parseLocal(iso: string): Date {
     : new Date(iso);
 }
 
-function ChartTooltip({ active, payload, locale }: any) {
+function ChartTooltip({ active, payload, locale, t, txByDate }: any) {
   if (!active || !payload?.length) return null;
   const p = payload[0].payload as NavPoint;
+  const txs: Marker[] = txByDate?.[p.date] ?? [];
   return (
     <div className="rounded-lg border bg-popover px-3 py-2 text-xs shadow-md">
       <div className="text-muted-foreground">
@@ -60,6 +61,34 @@ function ChartTooltip({ active, payload, locale }: any) {
       <div className="mt-0.5 font-semibold tabular-nums">
         {formatBaht(p.nav)}
       </div>
+      {txs.length > 0 && (
+        <div className="mt-1.5 space-y-1 border-t pt-1.5">
+          {txs.map((tx) => {
+            const buy = tx.type === "buy";
+            return (
+              <div key={tx.id} className="flex items-baseline gap-1.5">
+                <span
+                  className={cn(
+                    "font-medium",
+                    buy
+                      ? "text-emerald-600 dark:text-emerald-400"
+                      : "text-red-600 dark:text-red-400",
+                  )}
+                >
+                  {buy ? t("txBuy") : t("txSell")}
+                </span>
+                <span className="tabular-nums text-muted-foreground">
+                  ฿{formatBaht(tx.cost, 2)} ·{" "}
+                  {tx.units.toLocaleString(locale, {
+                    maximumFractionDigits: 4,
+                  })}{" "}
+                  {t("unit")}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
@@ -70,6 +99,8 @@ interface Marker {
   date: string; // matched history date (x on the category axis)
   nav: number; // NAV at that date (y)
   type: Transaction["type"];
+  cost: number; // baht amount of the trade
+  units: number; // units bought / sold
 }
 
 /**
@@ -94,7 +125,14 @@ function buildMarkers(data: NavPoint[], txs: Transaction[]): Marker[] {
         best = p;
       }
     }
-    out.push({ id: tx.id, date: best.date, nav: best.nav, type: tx.type });
+    out.push({
+      id: tx.id,
+      date: best.date,
+      nav: best.nav,
+      type: tx.type,
+      cost: tx.cost,
+      units: tx.units,
+    });
   }
   return out;
 }
@@ -108,7 +146,7 @@ export function NavChart({
   transactions?: Transaction[];
   className?: string;
 }) {
-  const { locale } = useI18n();
+  const { locale, t } = useI18n();
   const [range, setRange] = React.useState<TimeRange>(lastRange ?? "1Y");
 
   // Restore the saved range once per page load (after hydration, to avoid
@@ -145,6 +183,14 @@ export function NavChart({
     () => buildMarkers(data, transactions),
     [data, transactions],
   );
+
+  // Group markers by their snapped history date so the tooltip can list every
+  // trade that lands on the hovered point.
+  const txByDate = React.useMemo(() => {
+    const m: Record<string, Marker[]> = {};
+    for (const mk of markers) (m[mk.date] ??= []).push(mk);
+    return m;
+  }, [markers]);
 
   const up = data.length > 1 && data[data.length - 1].nav >= data[0].nav;
   const stroke = up ? "hsl(var(--chart-up))" : "hsl(var(--chart-down))";
@@ -210,7 +256,11 @@ export function NavChart({
               tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
               tickFormatter={(v) => Number(v).toFixed(2)}
             />
-            <Tooltip content={<ChartTooltip locale={locale} />} />
+            <Tooltip
+              content={
+                <ChartTooltip locale={locale} t={t} txByDate={txByDate} />
+              }
+            />
             <Area
               type="monotone"
               dataKey="nav"
@@ -230,9 +280,9 @@ export function NavChart({
                   key={m.id}
                   x={m.date}
                   y={m.nav}
-                  r={5}
+                  r={6}
                   fill={color}
-                  stroke="hsl(var(--background))"
+                  stroke="#fff"
                   strokeWidth={2}
                   isFront
                 />

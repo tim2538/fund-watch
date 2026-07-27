@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/card";
 import { DividendTable } from "@/components/dividend-table";
 import { NavChart } from "@/components/nav-chart";
+import { RecentTransactionsCard } from "@/components/recent-transactions-card";
 import { TopHoldings } from "@/components/top-holdings";
 import { DonutBreakdown } from "@/components/donut-breakdown";
 import {
@@ -175,6 +176,8 @@ export function FundDetail({ fund }: { fund: FundData }) {
           />
         </CardContent>
       </Card>
+
+      <RecentTransactionsCard symbol={fund.symbol} />
 
       <Card>
         <CardHeader className="pb-2">

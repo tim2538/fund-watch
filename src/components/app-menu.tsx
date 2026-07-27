@@ -1,12 +1,14 @@
 "use client";
 
 import * as React from "react";
-import { Database, Menu, Settings } from "lucide-react";
+import Link from "next/link";
+import { ArrowLeftRight, Database, Home, Menu, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SettingsDialog } from "@/components/settings-dialog";
@@ -32,6 +34,19 @@ export function AppMenu() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-44">
+          <DropdownMenuItem asChild>
+            <Link href="/">
+              <Home className="h-4 w-4" />
+              {t("home")}
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/transactions">
+              <ArrowLeftRight className="h-4 w-4" />
+              {t("transactions")}
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
           <DropdownMenuItem onSelect={() => setDataOpen(true)}>
             <Database className="h-4 w-4" />
             {t("manageData")}

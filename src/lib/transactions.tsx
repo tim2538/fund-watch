@@ -92,6 +92,8 @@ interface TransactionsValue {
   transactions: Transaction[];
   /** Append a transaction; returns the created record (with its id). */
   addTransaction: (tx: NewTransaction) => Transaction;
+  /** Replace the fields of an existing transaction (keeps its id). */
+  updateTransaction: (id: string, patch: Partial<NewTransaction>) => void;
   removeTransaction: (id: string) => void;
   /** Transactions for a single fund, sorted oldest → newest by date. */
   forSymbol: (symbol: FundSymbol) => Transaction[];
@@ -132,6 +134,19 @@ export function TransactionsProvider({
     [persist],
   );
 
+  const updateTransaction = React.useCallback<
+    TransactionsValue["updateTransaction"]
+  >(
+    (id, patch) => {
+      setTransactions((prev) => {
+        const next = prev.map((t) => (t.id === id ? { ...t, ...patch } : t));
+        persist(next);
+        return next;
+      });
+    },
+    [persist],
+  );
+
   const removeTransaction = React.useCallback<
     TransactionsValue["removeTransaction"]
   >(
@@ -154,8 +169,20 @@ export function TransactionsProvider({
   );
 
   const value = React.useMemo<TransactionsValue>(
-    () => ({ transactions, addTransaction, removeTransaction, forSymbol }),
-    [transactions, addTransaction, removeTransaction, forSymbol],
+    () => ({
+      transactions,
+      addTransaction,
+      updateTransaction,
+      removeTransaction,
+      forSymbol,
+    }),
+    [
+      transactions,
+      addTransaction,
+      updateTransaction,
+      removeTransaction,
+      forSymbol,
+    ],
   );
 
   return (

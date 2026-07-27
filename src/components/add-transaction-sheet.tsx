@@ -42,13 +42,25 @@ import { th as thLocale } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { usePortfolio } from "@/lib/portfolio";
-import { useTransactions, type TransactionType } from "@/lib/transactions";
+import {
+  useTransactions,
+  type Transaction,
+  type TransactionType,
+} from "@/lib/transactions";
 import type { FundData, FundSymbol } from "@/lib/funds";
 
 /** A Date as a local yyyy-mm-dd string (timezone-safe, for storage). */
 function toISODate(d: Date): string {
   const p = (n: number) => String(n).padStart(2, "0");
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+}
+
+/** Parse a yyyy-mm-dd string as a local calendar date. */
+function fromISODate(iso: string): Date {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso);
+  return m
+    ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]))
+    : new Date();
 }
 
 /** Parse a numeric input value, treating empty/invalid as 0. */
@@ -105,22 +117,33 @@ function ThousandsInput({
 function SheetForm({
   funds,
   defaultSymbol,
+  transaction,
   onClose,
 }: {
   funds: FundData[];
   defaultSymbol: FundSymbol;
+  /** When provided the form edits this trade instead of creating a new one. */
+  transaction?: Transaction;
   onClose: () => void;
 }) {
   const { t, lang, locale } = useI18n();
   const { entries, setEntry } = usePortfolio();
-  const { addTransaction } = useTransactions();
+  const { addTransaction, updateTransaction } = useTransactions();
 
-  const [symbol, setSymbol] = React.useState<FundSymbol>(defaultSymbol);
-  const [type, setType] = React.useState<TransactionType>("buy");
-  const [date, setDate] = React.useState<Date>(() => new Date());
+  const editing = transaction != null;
+
+  const [symbol, setSymbol] = React.useState<FundSymbol>(
+    transaction?.symbol ?? defaultSymbol,
+  );
+  const [type, setType] = React.useState<TransactionType>(
+    transaction?.type ?? "buy",
+  );
+  const [date, setDate] = React.useState<Date>(() =>
+    transaction ? fromISODate(transaction.date) : new Date(),
+  );
   const [dateOpen, setDateOpen] = React.useState(false);
-  const [cost, setCost] = React.useState(0);
-  const [units, setUnits] = React.useState(0);
+  const [cost, setCost] = React.useState(transaction?.cost ?? 0);
+  const [units, setUnits] = React.useState(transaction?.units ?? 0);
   const [updatePortfolio, setUpdatePortfolio] = React.useState(false);
 
   const valid = cost > 0 && units > 0 && !!date;
@@ -129,15 +152,20 @@ function SheetForm({
     e.preventDefault();
     if (!valid) return;
 
-    addTransaction({ symbol, type, date: toISODate(date), cost, units });
+    const fields = { symbol, type, date: toISODate(date), cost, units };
 
-    if (updatePortfolio) {
-      const cur = entries[symbol] ?? { cost: 0, units: 0 };
-      const sign = type === "buy" ? 1 : -1;
-      setEntry(symbol, {
-        cost: Math.max(0, cur.cost + sign * cost),
-        units: Math.max(0, cur.units + sign * units),
-      });
+    if (editing) {
+      updateTransaction(transaction.id, fields);
+    } else {
+      addTransaction(fields);
+      if (updatePortfolio) {
+        const cur = entries[symbol] ?? { cost: 0, units: 0 };
+        const sign = type === "buy" ? 1 : -1;
+        setEntry(symbol, {
+          cost: Math.max(0, cur.cost + sign * cost),
+          units: Math.max(0, cur.units + sign * units),
+        });
+      }
     }
 
     onClose();
@@ -224,6 +252,19 @@ function SheetForm({
             <Calendar
               mode="single"
               locale={lang === "th" ? thLocale : undefined}
+              // date-fns' Thai locale still prints Gregorian years; override the
+              // caption so the month header shows the Buddhist year (พ.ศ.).
+              formatters={
+                lang === "th"
+                  ? {
+                      formatCaption: (month: Date) =>
+                        new Intl.DateTimeFormat("th-TH", {
+                          month: "long",
+                          year: "numeric",
+                        }).format(month),
+                    }
+                  : undefined
+              }
               selected={date}
               onSelect={(d) => {
                 if (d) setDate(d);
@@ -253,26 +294,29 @@ function SheetForm({
         </div>
       </div>
 
-      {/* Update portfolio */}
-      <Label
-        htmlFor="tx-update"
-        className="flex cursor-pointer items-start gap-2.5 rounded-md border border-input p-3 font-normal"
-      >
-        <Checkbox
-          id="tx-update"
-          checked={updatePortfolio}
-          onCheckedChange={(c) => setUpdatePortfolio(c === true)}
-          className="mt-0.5"
-        />
-        <span className="min-w-0">
-          <span className="block text-sm font-medium">
-            {t("txUpdatePortfolio")}
+      {/* Update portfolio — only when creating (an edit can't cleanly re-apply
+          a delta, so we don't touch the aggregate position). */}
+      {!editing && (
+        <Label
+          htmlFor="tx-update"
+          className="flex cursor-pointer items-start gap-2.5 rounded-md border border-input p-3 font-normal"
+        >
+          <Checkbox
+            id="tx-update"
+            checked={updatePortfolio}
+            onCheckedChange={(c) => setUpdatePortfolio(c === true)}
+            className="mt-0.5"
+          />
+          <span className="min-w-0">
+            <span className="block text-sm font-medium">
+              {t("txUpdatePortfolio")}
+            </span>
+            <span className="block text-xs text-muted-foreground">
+              {t("txUpdatePortfolioHint")}
+            </span>
           </span>
-          <span className="block text-xs text-muted-foreground">
-            {t("txUpdatePortfolioHint")}
-          </span>
-        </span>
-      </Label>
+        </Label>
+      )}
 
       <Button
         type="submit"
@@ -285,7 +329,7 @@ function SheetForm({
         )}
       >
         {type === "buy" ? <ShoppingCart /> : <HandCoins />}
-        {t("txAdd")}
+        {editing ? t("save") : t("txAdd")}
       </Button>
     </form>
   );
@@ -296,13 +340,17 @@ export function AddTransactionSheet({
   open,
   onOpenChange,
   defaultSymbol,
+  transaction,
 }: {
   funds: FundData[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
   defaultSymbol: FundSymbol;
+  /** When set, the sheet edits this trade instead of creating a new one. */
+  transaction?: Transaction;
 }) {
   const { t } = useI18n();
+  const editing = transaction != null;
   const contentRef = React.useRef<HTMLDivElement>(null);
   const drag = React.useRef({ active: false, startY: 0, dy: 0 });
 
@@ -373,8 +421,12 @@ export function AddTransactionSheet({
         </div>
 
         <SheetHeader className="px-5 pb-3 pt-2">
-          <SheetTitle>{t("addTransaction")}</SheetTitle>
-          <SheetDescription>{t("addTransactionDesc")}</SheetDescription>
+          <SheetTitle>
+            {editing ? t("editTransaction") : t("addTransaction")}
+          </SheetTitle>
+          <SheetDescription>
+            {editing ? t("editTransactionDesc") : t("addTransactionDesc")}
+          </SheetDescription>
         </SheetHeader>
 
         {/* Rendered unconditionally so the form stays mounted through the
@@ -384,6 +436,7 @@ export function AddTransactionSheet({
         <SheetForm
           funds={funds}
           defaultSymbol={defaultSymbol}
+          transaction={transaction}
           onClose={() => onOpenChange(false)}
         />
       </SheetContent>

@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { AppMenu } from "@/components/app-menu";
 import { InstallPrompt } from "@/components/install-prompt";
 import { useI18n } from "@/lib/i18n";
@@ -36,7 +37,11 @@ export function AppHeader({ updatedAt }: { updatedAt: string }) {
         scrolled ? "border-border" : "border-transparent",
       )}
     >
-      <div className="flex min-w-0 gap-2.5">
+      <Link
+        href="/"
+        aria-label={t("home")}
+        className="flex min-w-0 gap-2.5 rounded-md focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+      >
         {/* App icon (light) — served from public/icons; basePath-aware for
             GitHub Pages project sub-paths. The SVG carries its own rounded
             background, so no wrapper styling is needed. */}
@@ -55,7 +60,7 @@ export function AppHeader({ updatedAt }: { updatedAt: string }) {
             {t("liveData")}
           </p>
         </div>
-      </div>
+      </Link>
       <div className="flex gap-2">
         <InstallPrompt />
         <AppMenu />

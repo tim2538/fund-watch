@@ -101,6 +101,7 @@ const en: Dict = {
   unitsLabel: "Units",
   currentValue: "Current value",
   cost: "Cost",
+  unit: "Unit",
   profit: "Profit/Loss",
   yourReturn: "Your return",
   avgCost: "Avg cost/unit",
@@ -127,6 +128,20 @@ const en: Dict = {
   txUpdatePortfolio: "Update portfolio",
   txUpdatePortfolioHint: "Buy adds to cost and units, sell subtracts",
   txAdd: "Add transaction",
+  editTransaction: "Edit transaction",
+  editTransactionDesc: "Update the details of this trade",
+  save: "Save changes",
+
+  // Menu / transactions page
+  home: "Home",
+  transactions: "Transactions",
+  recentTransactions: "Recent transactions",
+  viewAll: "View all",
+  noTransactions: "No transactions yet",
+  allFunds: "All funds",
+  txDelete: "Delete transaction",
+  confirmDelete: "Confirm delete",
+  cancel: "Cancel",
 };
 
 const th: Dict = {
@@ -215,6 +230,7 @@ const th: Dict = {
   unitsLabel: "จำนวนหน่วย",
   currentValue: "มูลค่าปัจจุบัน",
   cost: "ต้นทุน",
+  unit: "หน่วย",
   profit: "กำไร/ขาดทุน",
   yourReturn: "ผลตอบแทนของคุณ",
   avgCost: "ต้นทุนเฉลี่ย/หน่วย",
@@ -241,6 +257,20 @@ const th: Dict = {
   txUpdatePortfolio: "อัปเดตพอร์ต",
   txUpdatePortfolioHint: "ซื้อเพิ่มต้นทุนและจำนวนหน่วย ขายหักออก",
   txAdd: "เพิ่มรายการ",
+  editTransaction: "แก้ไขรายการ",
+  editTransactionDesc: "อัปเดตรายละเอียดของรายการนี้",
+  save: "บันทึกการแก้ไข",
+
+  // Menu / transactions page
+  home: "หน้าแรก",
+  transactions: "รายการซื้อขาย",
+  recentTransactions: "การซื้อขายล่าสุด",
+  viewAll: "ดูทั้งหมด",
+  noTransactions: "ยังไม่มีรายการซื้อขาย",
+  allFunds: "กองทุนทั้งหมด",
+  txDelete: "ลบรายการ",
+  confirmDelete: "ยืนยันการลบ",
+  cancel: "ยกเลิก",
 };
 
 const DICTS: Record<Lang, Dict> = { en, th };
