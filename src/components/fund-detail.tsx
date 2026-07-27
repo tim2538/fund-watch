@@ -177,7 +177,7 @@ export function FundDetail({ fund }: { fund: FundData }) {
         </CardContent>
       </Card>
 
-      <RecentTransactionsCard symbol={fund.symbol} />
+      {portfolioMode && <RecentTransactionsCard symbol={fund.symbol} />}
 
       <Card>
         <CardHeader className="pb-2">
