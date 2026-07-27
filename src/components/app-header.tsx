@@ -1,11 +1,10 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import { AppMenu } from "@/components/app-menu";
 import { InstallPrompt } from "@/components/install-prompt";
 import { useI18n } from "@/lib/i18n";
-import { cn } from "@/lib/utils";
+import { appHref, cn } from "@/lib/utils";
 
 export function AppHeader({ updatedAt }: { updatedAt: string }) {
   const { t, locale } = useI18n();
@@ -37,8 +36,8 @@ export function AppHeader({ updatedAt }: { updatedAt: string }) {
         scrolled ? "border-border" : "border-transparent",
       )}
     >
-      <Link
-        href="/"
+      <a
+        href={appHref("/")}
         aria-label={t("home")}
         className="flex min-w-0 gap-2.5 rounded-md focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
       >
@@ -60,7 +59,7 @@ export function AppHeader({ updatedAt }: { updatedAt: string }) {
             {t("liveData")}
           </p>
         </div>
-      </Link>
+      </a>
       <div className="flex gap-2">
         <InstallPrompt />
         <AppMenu />

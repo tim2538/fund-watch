@@ -5,6 +5,25 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+/** Configured basePath (e.g. "/fund-watch" on GitHub Pages, "" locally). */
+export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
+/**
+ * Build a base-path-aware, trailing-slash URL for use in plain <a> tags.
+ *
+ * We deliberately use full-page navigation (not next/link soft navigation) for
+ * cross-route links: on a static host like GitHub Pages, App Router client-side
+ * navigation can't fetch a route's RSC payload (the host ignores the RSC header
+ * and returns HTML), so soft-navigating to a build-time data page renders it
+ * without its baked data. A hard navigation always loads the correct static
+ * HTML. `path` should start with "/"; an optional query string is preserved.
+ */
+export function appHref(path: string): string {
+  const [pathname, query] = path.split("?");
+  const withSlash = pathname.endsWith("/") ? pathname : `${pathname}/`;
+  return `${BASE_PATH}${withSlash}${query ? `?${query}` : ""}`;
+}
+
 export function formatBaht(value: number, digits = 4): string {
   return new Intl.NumberFormat("en-US", {
     minimumFractionDigits: digits,

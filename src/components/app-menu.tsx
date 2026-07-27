@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import { ArrowLeftRight, Database, Home, Menu, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +13,7 @@ import {
 import { SettingsDialog } from "@/components/settings-dialog";
 import { ManageDataDialog } from "@/components/manage-data-dialog";
 import { useI18n } from "@/lib/i18n";
+import { appHref } from "@/lib/utils";
 
 export function AppMenu() {
   const { t } = useI18n();
@@ -35,16 +35,16 @@ export function AppMenu() {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-44">
           <DropdownMenuItem asChild>
-            <Link href="/">
+            <a href={appHref("/")}>
               <Home className="h-4 w-4" />
               {t("home")}
-            </Link>
+            </a>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href="/transactions">
+            <a href={appHref("/transactions")}>
               <ArrowLeftRight className="h-4 w-4" />
               {t("transactions")}
-            </Link>
+            </a>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onSelect={() => setDataOpen(true)}>

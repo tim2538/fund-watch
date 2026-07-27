@@ -1,13 +1,13 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { TransactionItem } from "@/components/transaction-item";
 import { useI18n } from "@/lib/i18n";
 import { useTransactions } from "@/lib/transactions";
+import { appHref } from "@/lib/utils";
 import type { FundSymbol } from "@/lib/funds";
 
 const RECENT_LIMIT = 3;
@@ -33,10 +33,10 @@ export function RecentTransactionsCard({ symbol }: { symbol: FundSymbol }) {
           size="sm"
           className="h-7 gap-0.5 px-2 text-xs text-muted-foreground"
         >
-          <Link href={`/transactions?fund=${symbol}`}>
+          <a href={appHref(`/transactions?fund=${symbol}`)}>
             {t("viewAll")}
             <ChevronRight className="h-3.5 w-3.5" />
-          </Link>
+          </a>
         </Button>
       </CardHeader>
       <CardContent>
