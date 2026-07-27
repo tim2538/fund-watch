@@ -1,5 +1,6 @@
 import { AppFooter, AppHeader } from "@/components/app-header";
 import { FundDashboard } from "@/components/fund-dashboard";
+import { TransactionsDialogProvider } from "@/components/transactions-dialog";
 import { getAllFunds } from "@/lib/scrape";
 import { FUND_SYMBOLS } from "@/lib/funds";
 
@@ -13,9 +14,11 @@ export default async function Home() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 pb-16 pt-3 sm:px-6">
-      <AppHeader updatedAt={updatedAt} />
-      <FundDashboard funds={funds} />
-      <AppFooter />
+      <TransactionsDialogProvider funds={funds}>
+        <AppHeader updatedAt={updatedAt} />
+        <FundDashboard funds={funds} />
+        <AppFooter />
+      </TransactionsDialogProvider>
     </div>
   );
 }

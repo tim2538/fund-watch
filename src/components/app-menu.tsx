@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { ArrowLeftRight, Database, Home, Menu, Settings } from "lucide-react";
+import { ArrowLeftRight, Database, Menu, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -12,11 +12,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SettingsDialog } from "@/components/settings-dialog";
 import { ManageDataDialog } from "@/components/manage-data-dialog";
+import { useTransactionsDialog } from "@/components/transactions-dialog";
 import { useI18n } from "@/lib/i18n";
-import { appHref } from "@/lib/utils";
 
 export function AppMenu() {
   const { t } = useI18n();
+  const { open: openTransactions } = useTransactionsDialog();
   const [settingsOpen, setSettingsOpen] = React.useState(false);
   const [dataOpen, setDataOpen] = React.useState(false);
 
@@ -34,17 +35,9 @@ export function AppMenu() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-44">
-          <DropdownMenuItem asChild>
-            <a href={appHref("/")}>
-              <Home className="h-4 w-4" />
-              {t("home")}
-            </a>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <a href={appHref("/transactions")}>
-              <ArrowLeftRight className="h-4 w-4" />
-              {t("transactions")}
-            </a>
+          <DropdownMenuItem onSelect={() => openTransactions()}>
+            <ArrowLeftRight className="h-4 w-4" />
+            {t("transactions")}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onSelect={() => setDataOpen(true)}>
