@@ -12,6 +12,7 @@ import {
   YAxis,
 } from "recharts";
 import { Button } from "@/components/ui/button";
+import { HorizontalScroller } from "@/components/horizontal-scroller";
 import { cn, formatBaht } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { sliceHistory, type NavPoint, type TimeRange } from "@/lib/funds";
@@ -202,19 +203,22 @@ export function NavChart({
 
   return (
     <div className={cn("space-y-3", className)}>
-      <div className="flex flex-wrap gap-1.5">
-        {RANGES.map((r) => (
-          <Button
-            key={r}
-            size="sm"
-            variant={range === r ? "default" : "outline"}
-            className="h-7 px-3 text-xs"
-            onClick={() => selectRange(r)}
-          >
-            {r}
-          </Button>
-        ))}
-      </div>
+      <HorizontalScroller activeKey={range}>
+        <div className="flex w-max gap-1.5">
+          {RANGES.map((r) => (
+            <Button
+              key={r}
+              size="sm"
+              variant={range === r ? "default" : "outline"}
+              data-active={range === r ? "true" : undefined}
+              className="h-7 shrink-0 px-3 text-xs"
+              onClick={() => selectRange(r)}
+            >
+              {r}
+            </Button>
+          ))}
+        </div>
+      </HorizontalScroller>
 
       <div className="h-[280px] w-full">
         <ResponsiveContainer width="100%" height="100%">

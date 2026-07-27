@@ -11,8 +11,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { Dialog } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { ThousandsInput } from "@/components/ui/thousands-input";
 import { cn, formatBaht, formatPercent, formatSignedBaht } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import {
@@ -22,53 +22,6 @@ import {
   type DisplayMode,
 } from "@/lib/portfolio";
 import type { FundData } from "@/lib/funds";
-
-/** Parse a numeric input value, treating empty/invalid as 0. */
-function parseNum(v: string): number {
-  if (v.trim() === "") return 0;
-  const n = Number(v);
-  return Number.isFinite(n) && n >= 0 ? n : 0;
-}
-
-/** Number input that shows thousand separators while not focused. */
-function ThousandsInput({
-  value,
-  onChange,
-  placeholder = "0",
-}: {
-  value: number;
-  onChange: (n: number) => void;
-  placeholder?: string;
-}) {
-  const [focused, setFocused] = React.useState(false);
-  const [text, setText] = React.useState("");
-
-  const display = focused
-    ? text
-    : value
-      ? value.toLocaleString("en-US", { maximumFractionDigits: 8 })
-      : "";
-
-  return (
-    <Input
-      type="text"
-      inputMode="decimal"
-      placeholder={placeholder}
-      value={display}
-      onFocus={() => {
-        setFocused(true);
-        setText(value ? String(value) : "");
-      }}
-      onChange={(e) => {
-        const raw = e.target.value.replace(/,/g, "");
-        if (!/^\d*\.?\d*$/.test(raw)) return;
-        setText(raw);
-        onChange(parseNum(raw));
-      }}
-      onBlur={() => setFocused(false)}
-    />
-  );
-}
 
 function ModeToggle() {
   const { t } = useI18n();
