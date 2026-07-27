@@ -2,8 +2,13 @@
 
 import * as React from "react";
 import { ArrowDownRight, ArrowUpRight, Wallet } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import {
+  ScrollableTabsList,
+  STICKY_TOP,
+} from "@/components/scrollable-tabs-list";
+import { HorizontalScroller } from "@/components/horizontal-scroller";
 import { FundSummaryCard } from "@/components/fund-summary-card";
 import { FundDetail } from "@/components/fund-detail";
 import { PortfolioDialog } from "@/components/portfolio-dialog";
@@ -21,6 +26,22 @@ export function FundDashboard({ funds }: { funds: FundData[] }) {
     funds[0]?.symbol ?? "BKD",
   );
   const [portfolioOpen, setPortfolioOpen] = React.useState(false);
+  const tabsRef = React.useRef<HTMLDivElement>(null);
+
+  /**
+   * Select a fund from the overview grid and scroll the page down so the tab
+   * strip parks at its sticky position, putting the fund detail in view.
+   * Skipped when the strip is already parked (or the user prefers less motion).
+   */
+  const selectFromCard = React.useCallback((symbol: FundSymbol) => {
+    setSelected(symbol);
+    const el = tabsRef.current;
+    if (!el) return;
+    const delta = el.getBoundingClientRect().top - STICKY_TOP;
+    if (delta <= 1) return; // already parked or scrolled past
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollBy({ top: delta, behavior: reduced ? "auto" : "smooth" });
+  }, []);
 
   const displayFunds = React.useMemo(
     () => visibleFunds(funds, order, hidden),
@@ -48,16 +69,31 @@ export function FundDashboard({ funds }: { funds: FundData[] }) {
             {t("myPortfolio")}
           </Button>
         </div>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {displayFunds.map((f) => (
-            <FundSummaryCard
-              key={f.symbol}
-              fund={f}
-              active={f.symbol === effectiveSelected}
-              onClick={() => setSelected(f.symbol)}
-            />
-          ))}
-        </div>
+        {/* Two rows that flow top-to-bottom then scroll sideways, so the
+            overview stays a fixed height no matter how many funds are tracked.
+            Falls back to a single row when there are too few to fill two.
+
+            The inner padding keeps the active card's border and focus ring off
+            the scroll container's clipping edge; the negative margin cancels it
+            so the cards still line up with the heading above. */}
+        <HorizontalScroller activeKey={effectiveSelected} className="-mx-1">
+          <div
+            className={cn(
+              "grid w-max snap-x snap-mandatory grid-flow-col gap-3 p-1",
+              displayFunds.length > 3 ? "grid-rows-2" : "grid-rows-1",
+            )}
+          >
+            {displayFunds.map((f) => (
+              <FundSummaryCard
+                key={f.symbol}
+                fund={f}
+                active={f.symbol === effectiveSelected}
+                onClick={() => selectFromCard(f.symbol)}
+                className="w-[15rem] shrink-0 snap-start sm:w-[18rem]"
+              />
+            ))}
+          </div>
+        </HorizontalScroller>
       </section>
 
       <Tabs
@@ -65,7 +101,7 @@ export function FundDashboard({ funds }: { funds: FundData[] }) {
         onValueChange={(v) => setSelected(v as FundSymbol)}
         className="w-full"
       >
-        <TabsList className="sticky top-[70px] z-10 flex h-auto w-full justify-start overflow-x-auto bg-muted p-2">
+        <ScrollableTabsList value={effectiveSelected} containerRef={tabsRef}>
           {displayFunds.map((f) => {
             const pos = computePosition(f, entries[f.symbol]);
             const percent =
@@ -102,7 +138,7 @@ export function FundDashboard({ funds }: { funds: FundData[] }) {
               </TabsTrigger>
             );
           })}
-        </TabsList>
+        </ScrollableTabsList>
         {displayFunds.map((f) => (
           <TabsContent key={f.symbol} value={f.symbol} className="mt-4">
             <FundDetail fund={f} />

@@ -18,10 +18,12 @@ export function FundSummaryCard({
   fund,
   active = false,
   onClick,
+  className,
 }: {
   fund: FundData;
   active?: boolean;
   onClick?: () => void;
+  className?: string;
 }) {
   const { t, lang, locale } = useI18n();
   const { displayMode, entries } = usePortfolio();
@@ -32,6 +34,7 @@ export function FundSummaryCard({
     <Card
       role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
+      data-active={active}
       onClick={onClick}
       onKeyDown={(e) => {
         if (onClick && (e.key === "Enter" || e.key === " ")) {
@@ -43,6 +46,7 @@ export function FundSummaryCard({
         "min-w-0 transition-all",
         onClick && "cursor-pointer hover:border-primary/40 hover:shadow-md",
         active && "border-primary ring-1 ring-primary",
+        className,
       )}
     >
       <CardHeader className="pb-2">

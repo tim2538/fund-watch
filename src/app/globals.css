@@ -111,3 +111,16 @@
     background: transparent;
   }
 }
+
+/* Opt out of the scrollbar styling above — used by the fund tab strip, which
+   scrolls horizontally but shows fade edges instead of a scrollbar. */
+@layer utilities {
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}

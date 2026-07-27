@@ -6,9 +6,29 @@
  * `ok: false` and the UI shows an error state.
  */
 
-export type FundSymbol = "BKD" | "BSIRICG" | "B-CHINE-EQ" | "BFIXED" | "SCBSET50";
+export type FundSymbol =
+  | "BKD"
+  | "BSIRICG"
+  | "B-CHINE-EQ"
+  | "BFIXED"
+  | "B-INNOTECH"
+  | "SCBSET50"
+  | "BCARERMF"
+  | "BBASICRMF"
+  | "BEQSSF"
+  | "B-FUTURESSF"
+  | "B-EQUITY";
 
-export type TimeRange = "1M" | "3M" | "6M" | "YTD" | "1Y" | "3Y" | "5Y" | "10Y" | "MAX";
+export type TimeRange =
+  | "1M"
+  | "3M"
+  | "6M"
+  | "YTD"
+  | "1Y"
+  | "3Y"
+  | "5Y"
+  | "10Y"
+  | "MAX";
 
 export interface NavPoint {
   date: string; // ISO yyyy-mm-dd
@@ -57,7 +77,13 @@ export const FUND_SYMBOLS: FundSymbol[] = [
   "BSIRICG",
   "B-CHINE-EQ",
   "BFIXED",
+  "B-INNOTECH",
   "SCBSET50",
+  "BCARERMF",
+  "BBASICRMF",
+  "BEQSSF",
+  "B-FUTURESSF",
+  "B-EQUITY",
 ];
 
 export const FINNOMENA_URL: Record<FundSymbol, string> = {
@@ -65,11 +91,20 @@ export const FINNOMENA_URL: Record<FundSymbol, string> = {
   BSIRICG: "https://www.finnomena.com/fund/BSIRICG",
   "B-CHINE-EQ": "https://www.finnomena.com/fund/B-CHINE-EQ",
   BFIXED: "https://www.finnomena.com/fund/BFIXED",
+  "B-INNOTECH": "https://www.finnomena.com/fund/B-INNOTECH",
   SCBSET50: "https://www.finnomena.com/fund/SCBSET50",
+  BCARERMF: "https://www.finnomena.com/fund/BCARERMF",
+  BBASICRMF: "https://www.finnomena.com/fund/BBASICRMF",
+  BEQSSF: "https://www.finnomena.com/fund/BEQSSF",
+  "B-FUTURESSF": "https://www.finnomena.com/fund/B-FUTURESSF",
+  "B-EQUITY": "https://www.finnomena.com/fund/B-EQUITY",
 };
 
 /** Slice a full history down to the requested range. */
-export function sliceHistory(history: NavPoint[], range: TimeRange): NavPoint[] {
+export function sliceHistory(
+  history: NavPoint[],
+  range: TimeRange,
+): NavPoint[] {
   if (!history.length) return history;
   const end = new Date(history[history.length - 1].date);
   let start: Date;
