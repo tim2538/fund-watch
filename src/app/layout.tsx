@@ -46,6 +46,11 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // Absolute base for static assets, known at build time. Using this (instead
+  // of deriving a directory from location.pathname) means the manifest resolves
+  // to /<basePath>/manifest.webmanifest on EVERY route, not just the home page.
+  const assetBase = `${process.env.NEXT_PUBLIC_BASE_PATH || ""}/`;
+
   return (
     <html lang="th" suppressHydrationWarning>
       <body
@@ -55,12 +60,13 @@ export default function RootLayout({
         )}
       >
         {/* (1) Inject the manifest + apple-touch-icon links pointing at the
-            *actual* URL directory, so they resolve under any basePath
-            (e.g. /fund-watch/manifest.webmanifest) — Next doesn't do this
-            correctly for a project sub-path. (2) Capture the install event
-            before React hydrates so the button never misses it. */}
+            build-time basePath root, so they resolve to
+            /<basePath>/manifest.webmanifest on every route (Next doesn't apply
+            basePath to the manifest link for a project sub-path). (2) Capture
+            the install event before React hydrates so the button never misses
+            it. */}
         <Script id="pwa-boot" strategy="beforeInteractive">
-          {`(function(){try{var dir=location.pathname.replace(/[^\\/]*$/,'');document.querySelectorAll('link[rel="manifest"]').forEach(function(n){n.remove();});var m=document.createElement('link');m.rel='manifest';m.href=dir+'manifest.webmanifest';document.head.appendChild(m);var a=document.createElement('link');a.rel='apple-touch-icon';a.href=dir+'icons/apple-touch-icon.png';document.head.appendChild(a);}catch(e){}window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();window.__deferredInstallPrompt=e;window.dispatchEvent(new Event('pwa-installable'));});})();`}
+          {`(function(){try{var base='${assetBase}';document.querySelectorAll('link[rel="manifest"]').forEach(function(n){n.remove();});var m=document.createElement('link');m.rel='manifest';m.href=base+'manifest.webmanifest';document.head.appendChild(m);var a=document.createElement('link');a.rel='apple-touch-icon';a.href=base+'icons/apple-touch-icon.png';document.head.appendChild(a);}catch(e){}window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();window.__deferredInstallPrompt=e;window.dispatchEvent(new Event('pwa-installable'));});})();`}
         </Script>
         <ThemeProvider
           attribute="class"
