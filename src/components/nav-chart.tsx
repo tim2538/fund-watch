@@ -202,7 +202,11 @@ export function NavChart({
   const pad = (max - min) * 0.08 || 0.1;
 
   return (
-    <div className={cn("space-y-3", className)}>
+    // overflow-x-clip: keep a tooltip that lands near the right edge from
+    // widening the page — that horizontal overflow shoves the fixed FAB
+    // off-screen on Samsung Internet. Clipping here (not on <html>) leaves the
+    // page scroll container, sticky header, and scroll locks untouched.
+    <div className={cn("space-y-3 overflow-x-clip", className)}>
       <HorizontalScroller activeKey={range}>
         <div className="flex w-max gap-1.5">
           {RANGES.map((r) => (

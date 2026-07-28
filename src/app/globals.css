@@ -69,16 +69,6 @@
   * {
     @apply border-border;
   }
-  /* The <html> element is the real document scroller on mobile. Clipping its
-     horizontal overflow here (in addition to body) stops a wide child — e.g. the
-     NAV chart's tooltip near the right edge — from widening the layout viewport.
-     Samsung Internet anchors `position: fixed` to that layout viewport, so
-     without this the add-transaction FAB (right-6) gets shoved off-screen.
-     `clip` (not `hidden`) avoids turning <html> into a scroll container, which
-     would break the sticky fund-tab strip. */
-  html {
-    overflow-x: clip;
-  }
   body {
     @apply bg-background text-foreground;
     -webkit-font-smoothing: antialiased;

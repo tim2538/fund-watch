@@ -62,7 +62,10 @@ export function DonutBreakdown({
   let rank = 0;
 
   return (
-    <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-center">
+    // overflow-x-clip: a tooltip near the right edge must not widen the page
+    // (that horizontal overflow pushes the fixed FAB off-screen on Samsung
+    // Internet). Safe here — no sticky/scroll-container elements live inside.
+    <div className="flex flex-col items-center gap-4 overflow-x-clip sm:flex-row sm:items-center">
       <div className="relative h-[180px] w-[180px] shrink-0">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
