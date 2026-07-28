@@ -55,7 +55,7 @@ export default function RootLayout({
     <html lang="th" suppressHydrationWarning>
       <body
         className={cn(
-          "min-h-screen overflow-x-hidden bg-background antialiased",
+          "min-h-screen overflow-x-clip bg-background antialiased",
           sarabun.variable,
         )}
       >

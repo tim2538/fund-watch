@@ -51,7 +51,7 @@ function ChartTooltip({ active, payload, locale, t, txByDate }: any) {
   const p = payload[0].payload as NavPoint;
   const txs: Marker[] = txByDate?.[p.date] ?? [];
   return (
-    <div className="rounded-lg border bg-popover px-3 py-2 text-xs shadow-md">
+    <div className="max-w-[70vw] break-words rounded-lg border bg-popover px-3 py-2 text-xs shadow-md">
       <div className="text-muted-foreground">
         {parseLocal(p.date).toLocaleDateString(locale, {
           day: "numeric",

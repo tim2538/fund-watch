@@ -30,7 +30,7 @@ export function ScrollableTabsList({
     <div
       ref={containerRef}
       style={{ top: STICKY_TOP }}
-      className="sticky z-10 rounded-lg bg-muted"
+      className="sticky z-20 rounded-lg bg-muted"
     >
       <HorizontalScroller
         activeKey={value}
