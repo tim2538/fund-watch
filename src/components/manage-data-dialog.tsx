@@ -253,9 +253,9 @@ export function ManageDataDialog({
               )}
             >
               {tb === "export" ? (
-                <Download className="h-3.5 w-3.5" />
+                <QrCode className="h-3.5 w-3.5" />
               ) : (
-                <Upload className="h-3.5 w-3.5" />
+                <ScanLine className="h-3.5 w-3.5" />
               )}
               {tb === "export" ? t("exportTab") : t("importTab")}
             </button>

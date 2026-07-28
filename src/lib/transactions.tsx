@@ -16,6 +16,7 @@
 
 import * as React from "react";
 import { FUND_SYMBOLS, type FundSymbol } from "@/lib/funds";
+import type { ImportedTransaction } from "@/lib/transactions-io";
 
 export type TransactionType = "buy" | "sell";
 
@@ -77,6 +78,27 @@ function readTransactions(): Transaction[] {
   return [];
 }
 
+/**
+ * Identity key for de-duplication on import: two records describing the same
+ * trade (same fund, side, date, amount, units) collapse to one, so re-importing
+ * a file you already have is a no-op.
+ */
+function contentKey(t: {
+  symbol: FundSymbol;
+  type: TransactionType;
+  date: string;
+  cost: number;
+  units: number;
+}): string {
+  return `${t.symbol}|${t.type}|${t.date}|${t.cost}|${t.units}`;
+}
+
+/** Outcome of a bulk import: how many rows were added vs. skipped as dupes. */
+export interface ImportResult {
+  added: number;
+  skipped: number;
+}
+
 function makeId(): string {
   try {
     if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
@@ -97,6 +119,11 @@ interface TransactionsValue {
   removeTransaction: (id: string) => void;
   /** Transactions for a single fund, sorted oldest → newest by date. */
   forSymbol: (symbol: FundSymbol) => Transaction[];
+  /**
+   * Merge imported transactions into the existing list, skipping any that
+   * duplicate an existing record (by id or by content). Returns the counts.
+   */
+  importTransactions: (incoming: ImportedTransaction[]) => ImportResult;
 }
 
 const TransactionsContext = React.createContext<TransactionsValue | null>(null);
@@ -160,6 +187,47 @@ export function TransactionsProvider({
     [persist],
   );
 
+  const importTransactions = React.useCallback<
+    TransactionsValue["importTransactions"]
+  >(
+    (incoming) => {
+      // Compute synchronously against the current list so we can return counts.
+      const ids = new Set(transactions.map((t) => t.id));
+      const keys = new Set(transactions.map(contentKey));
+      const additions: Transaction[] = [];
+      let skipped = 0;
+
+      for (const cand of incoming) {
+        const key = contentKey(cand);
+        // Same trade already present, or an id we already hold → skip.
+        if (keys.has(key) || (cand.id && ids.has(cand.id))) {
+          skipped++;
+          continue;
+        }
+        const id = cand.id && !ids.has(cand.id) ? cand.id : makeId();
+        const created: Transaction = {
+          id,
+          symbol: cand.symbol,
+          type: cand.type,
+          date: cand.date,
+          cost: cand.cost,
+          units: cand.units,
+        };
+        additions.push(created);
+        ids.add(id);
+        keys.add(key);
+      }
+
+      if (additions.length > 0) {
+        const next = [...transactions, ...additions];
+        setTransactions(next);
+        persist(next);
+      }
+      return { added: additions.length, skipped };
+    },
+    [transactions, persist],
+  );
+
   const forSymbol = React.useCallback<TransactionsValue["forSymbol"]>(
     (symbol) =>
       transactions
@@ -175,6 +243,7 @@ export function TransactionsProvider({
       updateTransaction,
       removeTransaction,
       forSymbol,
+      importTransactions,
     }),
     [
       transactions,
@@ -182,6 +251,7 @@ export function TransactionsProvider({
       updateTransaction,
       removeTransaction,
       forSymbol,
+      importTransactions,
     ],
   );
 

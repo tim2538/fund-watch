@@ -9,6 +9,12 @@
  */
 
 import * as React from "react";
+import {
+  AlertCircle,
+  CheckCircle2,
+  FileInput,
+  FileOutput,
+} from "lucide-react";
 import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { TransactionItem } from "@/components/transaction-item";
@@ -16,9 +22,13 @@ import { AddTransactionSheet } from "@/components/add-transaction-sheet";
 import { HorizontalScroller } from "@/components/horizontal-scroller";
 import { useI18n } from "@/lib/i18n";
 import { useTransactions, type Transaction } from "@/lib/transactions";
+import {
+  parseTransactionsText,
+  transactionsToCsv,
+} from "@/lib/transactions-io";
 import { usePortfolio, visibleFunds } from "@/lib/portfolio";
 import type { FundData, FundSymbol } from "@/lib/funds";
-import { formatBaht } from "@/lib/utils";
+import { cn, fileStamp, formatBaht } from "@/lib/utils";
 
 type Filter = FundSymbol | "all";
 
@@ -81,10 +91,52 @@ function TransactionsDialogView({
   initialFund: FundSymbol | null;
 }) {
   const { t } = useI18n();
-  const { transactions, removeTransaction } = useTransactions();
+  const { transactions, removeTransaction, importTransactions } =
+    useTransactions();
   const { order, hidden } = usePortfolio();
   const [filter, setFilter] = React.useState<Filter>("all");
   const [editing, setEditing] = React.useState<Transaction | null>(null);
+  const [status, setStatus] = React.useState<{
+    ok: boolean;
+    msg: string;
+  } | null>(null);
+  const fileRef = React.useRef<HTMLInputElement>(null);
+
+  // Download all transactions as a CSV backup (oldest → newest).
+  const handleExport = React.useCallback(() => {
+    const csv = transactionsToCsv(
+      [...transactions].sort((a, b) => a.date.localeCompare(b.date)),
+    );
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `fund-watch-transactions-${fileStamp(new Date())}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [transactions]);
+
+  // Parse a chosen CSV / JSON file and merge it into the list.
+  const handleImportFile = React.useCallback(
+    async (file: File) => {
+      setStatus(null);
+      try {
+        const parsed = parseTransactionsText(await file.text());
+        if (parsed.length === 0) {
+          setStatus({ ok: false, msg: t("txImportEmpty") });
+          return;
+        }
+        const { added, skipped } = importTransactions(parsed);
+        setStatus({
+          ok: true,
+          msg: t("txImportResult", { added, skipped }),
+        });
+      } catch {
+        setStatus({ ok: false, msg: t("txImportError") });
+      }
+    },
+    [importTransactions, t],
+  );
 
   // Match the fund tabs: same ordering, and hidden funds filtered out.
   const filterFunds = React.useMemo(
@@ -94,7 +146,10 @@ function TransactionsDialogView({
 
   // Seed the filter from the requested fund each time the dialog opens.
   React.useEffect(() => {
-    if (open) setFilter(initialFund ?? "all");
+    if (open) {
+      setFilter(initialFund ?? "all");
+      setStatus(null);
+    }
   }, [open, initialFund]);
 
   // Opened from the recent-transactions card (a specific fund was requested):
@@ -140,34 +195,96 @@ function TransactionsDialogView({
         className="sm:max-w-2xl"
       >
         <div className="space-y-3">
-          {/* Fund filter — scrollable chip row. Hidden when the dialog was
-              opened from a fund's recent-transactions card. */}
-          {!hideFilter && (
-            <HorizontalScroller activeKey={filter}>
-              <div className="flex w-max gap-1.5 pb-1">
-                <Button
-                  size="sm"
-                  variant={filter === "all" ? "default" : "outline"}
-                  data-active={filter === "all" ? "true" : undefined}
-                  className="h-8 shrink-0 px-3 text-xs"
-                  onClick={() => setFilter("all")}
-                >
-                  {t("allFunds")}
-                </Button>
-                {filterFunds.map((f) => (
+          {/* Filter row: fund chips on the left, import / export on the right.
+              Transactions are file-based (CSV / JSON) rather than QR, since the
+              list grows unbounded. On mobile the buttons collapse to icons —
+              same pattern as the "Install app" button. */}
+          <div className="flex items-center gap-2">
+            {/* Fund filter — scrollable chip row. Hidden when the dialog was
+                opened from a fund's recent-transactions card. */}
+            {!hideFilter ? (
+              <HorizontalScroller
+                activeKey={filter}
+                className="min-w-0 flex-1"
+              >
+                <div className="flex w-max gap-1.5 pb-1">
                   <Button
-                    key={f.symbol}
                     size="sm"
-                    variant={filter === f.symbol ? "default" : "outline"}
-                    data-active={filter === f.symbol ? "true" : undefined}
-                    className="h-8 shrink-0 px-3 font-mono text-xs"
-                    onClick={() => setFilter(f.symbol)}
+                    variant={filter === "all" ? "default" : "outline"}
+                    data-active={filter === "all" ? "true" : undefined}
+                    className="h-8 shrink-0 px-3 text-xs"
+                    onClick={() => setFilter("all")}
                   >
-                    {f.symbol}
+                    {t("allFunds")}
                   </Button>
-                ))}
-              </div>
-            </HorizontalScroller>
+                  {filterFunds.map((f) => (
+                    <Button
+                      key={f.symbol}
+                      size="sm"
+                      variant={filter === f.symbol ? "default" : "outline"}
+                      data-active={filter === f.symbol ? "true" : undefined}
+                      className="h-8 shrink-0 px-3 font-mono text-xs"
+                      onClick={() => setFilter(f.symbol)}
+                    >
+                      {f.symbol}
+                    </Button>
+                  ))}
+                </div>
+              </HorizontalScroller>
+            ) : (
+              <div className="flex-1" />
+            )}
+
+            <div className="flex shrink-0 items-center gap-2 pb-1">
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 gap-1.5 px-2.5 text-xs"
+                disabled={transactions.length === 0}
+                onClick={handleExport}
+              >
+                <FileOutput className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">{t("txExport")}</span>
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 gap-1.5 px-2.5 text-xs"
+                onClick={() => fileRef.current?.click()}
+              >
+                <FileInput className="h-3.5 w-3.5" />
+                <span>{t("txImport")}</span>
+              </Button>
+              <input
+                ref={fileRef}
+                type="file"
+                accept=".csv,.json,text/csv,application/json"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleImportFile(file);
+                  e.target.value = "";
+                }}
+              />
+            </div>
+          </div>
+
+          {status && (
+            <div
+              className={cn(
+                "flex items-center gap-2 rounded-md border px-3 py-2 text-xs",
+                status.ok
+                  ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
+                  : "border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-400",
+              )}
+            >
+              {status.ok ? (
+                <CheckCircle2 className="h-4 w-4 shrink-0" />
+              ) : (
+                <AlertCircle className="h-4 w-4 shrink-0" />
+              )}
+              {status.msg}
+            </div>
           )}
 
           {list.length === 0 ? (
